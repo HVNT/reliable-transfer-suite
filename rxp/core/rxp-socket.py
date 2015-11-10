@@ -21,8 +21,8 @@ class RxPSocket(object):
 
         self.is_sender = False  # TODO appropriate default?
 
-        self.dst_addr = None
-        self.src_addr = None
+        self.dst_adr = None
+        self.src_adr = None
 
         self.send_bfr = []  # TODO allocate appropriate space..
         self.recv_bfr = []  # ""
@@ -41,10 +41,34 @@ class RxPSocket(object):
         # initialize UDP socket
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    # def bind(self):
-    #
-    #
-    # def connect(self):
+    """ TODO fix comment
+    binds socket to the given port. port is optional. If no port is given,
+    self.port is used. If self.port has not been set, this method does nothing.
+    """
+    def bind(self, src_adr):
+        if src_adr:
+            self.src_adr = src_adr
+
+        if self.src_adr:
+            self._socket.bind(self.src_adr)
+        # else
+            # TODO raise exception
+
+    """ TODO fix comment
+    connects to destAddr given in format (ipaddr, portNum). Uses a handshake. The
+    sender sends a SYN packet. The receiver sends back a SYN, ACK. The sender then
+    sends an ACK and the handshake is complete.
+    """
+    def connect(self, dst_adr):
+        if self.src_adr and dst_adr:
+            self.dst_adr = dst_adr
+
+            self.seq = 0  # TODO update when wrappable num
+
+
+
+        # else:
+            # TODO raise exception
     #
     #
     # def listen(self):
