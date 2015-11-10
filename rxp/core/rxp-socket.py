@@ -3,18 +3,6 @@ __author__ = 'hunt'
 import socket
 
 
-"""
-enum that describes the connection status of a socket
-"""
-
-
-class RxPConnectionStatus():
-    NONE = "no_conn"
-    IDLE = "idle"
-    SEND = "sending"
-    RECV = "receiving"
-
-
 class RxPSocket(object):
     def __init__(self):
         # TODO verify python version
@@ -60,9 +48,8 @@ class RxPSocket(object):
     sends an ACK and the handshake is complete.
     """
     def connect(self, dst_adr):
-        if self.src_adr and dst_adr:
+        if dst_adr and self.src_adr:
             self.dst_adr = dst_adr
-
             self.seq = 0  # TODO update when wrappable num
 
 
@@ -84,3 +71,12 @@ class RxPSocket(object):
     #
     #
     # def close(self):
+
+    """
+    enum that describes the connection status of a socket
+    """
+    class RxPConnectionStatus():
+        NONE = "no_conn"
+        IDLE = "idle"
+        SEND = "sending"
+        RECV = "receiving"
