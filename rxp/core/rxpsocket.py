@@ -1,6 +1,6 @@
-__author__ = 'hunt'
-
 import socket
+
+__author__ = 'hunt'
 
 
 class RxPSocket(object):

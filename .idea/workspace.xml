@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a042fc1-01a0-4a9c-83ae-ebf802be8ea5" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rxp/core/rxp-header.py" afterPath="$PROJECT_DIR$/rxp/core/rxp-header.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rxp/core/rxp-packet.py" afterPath="$PROJECT_DIR$/rxp/core/rxp-packet.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rxp/core/rxp-socket.py" afterPath="$PROJECT_DIR$/rxp/core/rxp-socket.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/rxp/core/rxpexception.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/rxp/core/rxppacket.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/rxp/core/rxp-packet.py" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/rxp/core/rxp-exception.py" afterPath="$PROJECT_DIR$/rxp/core/__init__.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/rxp/core/rxp-header.py" afterPath="$PROJECT_DIR$/rxp/core/rxpheader.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/rxp/core/rxp-socket.py" afterPath="$PROJECT_DIR$/rxp/core/rxpsocket.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="reliable-transfer-suite.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -25,41 +29,51 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="rxp-header.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/rxp/core/rxp-header.py">
+      <file leaf-file-name="rxpheader.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/rxp/core/rxpheader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6">
-              <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.054545455">
+              <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rxp-packet.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rxp/core/rxp-packet.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="rxp-socket.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rxp/core/rxp-socket.py">
+      <file leaf-file-name="rxppacket.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rxp/core/rxppacket.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="64" column="5" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
+              <caret line="7" column="43" selection-start-line="7" selection-start-column="43" selection-end-line="7" selection-end-column="43" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rxp-exception.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rxp/core/rxp-exception.py">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rxp/core/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="rxpsocket.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rxp/core/rxpsocket.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="rxpexception.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rxp/core/rxpexception.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="0" column="19" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -103,10 +117,15 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/rxp/core/rxp-server.py" />
         <option value="$PROJECT_DIR$/rxp/core/rxp-client.py" />
-        <option value="$PROJECT_DIR$/rxp/core/rxp-exception.py" />
-        <option value="$PROJECT_DIR$/rxp/core/rxp-packet.py" />
-        <option value="$PROJECT_DIR$/rxp/core/rxp-socket.py" />
         <option value="$PROJECT_DIR$/rxp/core/rxp-header.py" />
+        <option value="$PROJECT_DIR$/rxp/core/rxp-exception.py" />
+        <option value="$PROJECT_DIR$/rxp/core/rxp-socket.py" />
+        <option value="$PROJECT_DIR$/rxp/core/__init__.py" />
+        <option value="$PROJECT_DIR$/rxp/core/rxp-packet.py" />
+        <option value="$PROJECT_DIR$/rxp/core/rxppacket.py" />
+        <option value="$PROJECT_DIR$/rxp/core/rxpexception.py" />
+        <option value="$PROJECT_DIR$/rxp/core/rxpsocket.py" />
+        <option value="$PROJECT_DIR$/rxp/core/rxpheader.py" />
       </list>
     </option>
   </component>
@@ -364,14 +383,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rxp/core/rxp-exception.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -380,26 +391,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rxp/core/rxp-packet.py">
+    <entry file="file://$PROJECT_DIR$/rxp/core/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rxp/core/rxp-socket.py">
+    <entry file="file://$PROJECT_DIR$/rxp/core/rxpexception.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="64" column="5" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
+          <caret line="0" column="19" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rxp/core/rxp-header.py">
+    <entry file="file://$PROJECT_DIR$/rxp/core/rxppacket.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6">
-          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="7" column="43" selection-start-line="7" selection-start-column="43" selection-end-line="7" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rxp/core/rxpsocket.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rxp/core/rxpheader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.054545455">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
           <folding />
         </state>
       </provider>

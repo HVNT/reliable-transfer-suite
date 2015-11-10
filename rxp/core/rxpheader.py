@@ -1,6 +1,6 @@
-__author__ = 'hunt'
-
 import ctypes
+
+__author__ = 'hunt'
 
 
 # define binary types for use in header fields.
