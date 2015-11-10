@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a042fc1-01a0-4a9c-83ae-ebf802be8ea5" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/rxp/core/rxp-client.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/rxp/core/rxp-server.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rxp/core/rxp-socket.py" afterPath="$PROJECT_DIR$/rxp/core/rxp-socket.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="reliable-transfer-suite.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,8 +26,8 @@
       <file leaf-file-name="rxp-socket.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rxp/core/rxp-socket.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.27272728">
-              <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+            <state vertical-scroll-proportion="0.54545456">
+              <caret line="43" column="21" selection-start-line="43" selection-start-column="21" selection-end-line="43" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -399,8 +396,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rxp/core/rxp-socket.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27272728">
-          <caret line="15" column="24" selection-start-line="15" selection-start-column="24" selection-end-line="15" selection-end-column="24" />
+        <state vertical-scroll-proportion="0.54545456">
+          <caret line="43" column="21" selection-start-line="43" selection-start-column="21" selection-end-line="43" selection-end-column="21" />
           <folding />
         </state>
       </provider>
