@@ -3,6 +3,18 @@ import socket
 __author__ = 'hunt'
 
 
+"""
+enum that describes the connection status of a socket
+"""
+
+
+class RxPConnectionStatus():
+    NONE = "no_conn"
+    IDLE = "idle"
+    SEND = "sending"
+    RECV = "receiving"
+
+
 class RxPSocket(object):
     def __init__(self):
         # TODO verify python version
@@ -71,12 +83,3 @@ class RxPSocket(object):
     #
     #
     # def close(self):
-
-    """
-    enum that describes the connection status of a socket
-    """
-    class RxPConnectionStatus():
-        NONE = "no_conn"
-        IDLE = "idle"
-        SEND = "sending"
-        RECV = "receiving"
