@@ -8,7 +8,8 @@ class RxPException(Exception):
 	INVALID_SOURCE 		= 4
 	INVALID_TYPE 		= 5	
 	RESEND_LIMIT 		= 6
-
+	#TODO add/remove exception types as needed
+	
 	MESSAGE = {
 		CONNECTION_TIMEOUT: "connection timeout",
 		INVALID_CHECKSUM:	"invalid checksum",
