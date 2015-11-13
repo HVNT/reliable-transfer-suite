@@ -1,11 +1,12 @@
 # from rxp_exception import RxPException
-import Queue
 from rxp_packet import RxPPacket
 from io_loop import IOLoop
 from retransmit_timer import RetransmitTimer
 
+import Queue
 import socket
 import logging
+import time
 
 __author__ = 'hunt'
 
@@ -25,8 +26,12 @@ class RxPSocket:
         # TODO verify python version ??
 
         self.io_loop = IOLoop()
+
+        # TODO should we put on the io_loop? so it can just keep track of itself?
+        self.cxn_status = RxPConnectionStatus.NONE
         self.retransmit_timer = RetransmitTimer()
 
+        # for python module logging msgs..
         self.logger = logging.getLogger('rxp_socket')
         self.logger.setLevel(10)  # TODO set based on whether debugging enabled
 
@@ -36,10 +41,6 @@ class RxPSocket:
         self.dst_adr = None
         self.src_adr = None
 
-        self.send_window = 1  # TODO appropriate defualt?
-        self.recv_window = None  # TODO Packet.MAX_WINDOW_SIZE
-
-        self.cxn_status = RxPConnectionStatus.NONE
         self.cxn_timeout = None  # TODO set
 
         self.seq_number = 0
@@ -71,6 +72,7 @@ class RxPSocket:
     """
     For server to accept new client socket.
     """
+
     def accept(self):
         syn_received = False
         ack_received = False
@@ -80,6 +82,7 @@ class RxPSocket:
 
         # wait for a syn that passes verification
         while not syn_received:
+            # TODO self.cxn_status
             try:
                 # NOTE: 1st param blocks, 2nd is timeout (on queue.get)
                 syn_packet, self.destination = self.io_loop.recv_queue.get(True, 1)
@@ -99,10 +102,11 @@ class RxPSocket:
             syn=True
         )
 
+        # TODO self.cxn_status
         self.io_loop.send_queue.put((syn_ack_packet, self.destination))
         self.seq_number += 1
 
-        # wait for ACK from client confirming SYN/ACK received, retransmit on timeout
+        # wait for ACK from client confirming SYN/ACK received, TODO retransmit on timeout
         while not ack_received:
             try:
                 ack_packet, address = self.io_loop.recv_queue.get(True, 1)
@@ -116,9 +120,12 @@ class RxPSocket:
                 if ack_received:
                     self.logger.debug('Received ACK during handshake. Client socket accepted')
 
+        self.cxn_status = RxPConnectionStatus.IDLE
+
     """
     For client to attempt to connect to a server.
     """
+
     def connect(self, dst_adr):
         self.destination = dst_adr
         syn_ack_received = False
@@ -137,7 +144,7 @@ class RxPSocket:
         self.io_loop.send_queue.put((syn_packet, self.destination))
         self.seq_number += 1
 
-        # wait for SYN/ACK, retransmit on timeout
+        # wait for SYN/ACK, TODO retransmit on timeout
         while not syn_ack_received:
             try:
                 syn_ack_packet, address = self.io_loop.recv_queue.get(True, 1)
@@ -163,14 +170,54 @@ class RxPSocket:
         self.io_loop.send_queue.put((ack_packet, self.destination))
         self.seq_number += 1
 
+        self.cxn_status = RxPConnectionStatus.IDLE
+
+    """
+    For client or server to send a msg. The 'kill_packet' is used
+    to inform client and server can know when we done sending.
+    """
+
+    def send(self, msg):
+        floor = 0
+        payload_size = 512
+        packets = []
+
+        # chunk data into packets
+        while floor < len(msg):
+            if floor + payload_size <= len(msg):
+                payload = msg[floor: floor + payload_size]
+            else:
+                payload = msg[floor:]
+
+            data_packet = RxPPacket(
+                self.port_number,
+                self.destination[1],
+                seq_number=self.seq_number,
+                payload=payload
+            )
+            packets.append(data_packet)
+            self.seq_number += 1
+            floor += payload_size
+
+        kill_packet = RxPPacket(
+            self.port_number,
+            self.destination[1],
+            seq_number=self.seq_number
+        )
+        packets.append(kill_packet)  # put that shit at the end after we've added all the other packets
+        self.kill_seq_number = self.seq_number
+
+        time_sent = time.time()
+        time_remaining = self.retransmit_timer.timeout
+        self.logger.debug('Placing packets in window to be sent now...')
+
+
 
 
         #
         #
         # def listen(self):
         #
-        #
-        # def accept(self):
         #
         #
 
@@ -180,38 +227,6 @@ class RxPSocket:
         #
         #
         # def close(self):
-
-    def send(self, msg):
-        start = 0
-        payload_size = 512
-        packets = []
-
-        # chunk data into packets
-        while start < len(msg):
-            if start + payload_size <= len(msg):
-                payload = msg[start: start + payload_size]
-            else:
-                payload = msg[start:]
-
-            data_packet = RxPPacket(
-                self.port_number,
-                self.destination[1],
-                seq_number=self.seq_number,
-                payload=payload
-            )
-            packets.append(data_packet)
-            self.sequence_number += 1
-            start += payload_size
-
-        terminator_packet = RxPPacket(
-            self.port_number,
-            self.destination[1],
-            seq_number=self.sequence_number
-        )
-
-    # def _send_control_packet(self):
-
-
 
     def __verify_syn(self, packet, address):
         return address == self.destination and packet.syn

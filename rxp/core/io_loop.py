@@ -1,8 +1,9 @@
-import Queue
-import socket
 from threading import Thread
 from rxp_packet import RxPPacket
 from rxp_packet import ParseException
+
+import Queue
+import socket
 
 __author__ = 'hunt'
 
