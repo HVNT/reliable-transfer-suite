@@ -260,7 +260,7 @@ class RxPSocket:
 
                 window.slide()
 
-                if not window.has_space():
+                if not window.has_room():
                     self.io.send_queue.put((window.window[-1], self.destination))
                     self.seq_number += 1
                     # print "executing"
