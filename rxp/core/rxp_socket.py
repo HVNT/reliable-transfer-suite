@@ -1,6 +1,7 @@
 # from rxp_exception import RxPException
-from rxp_packet import RxPPacket
 from io_loop import IOLoop
+from rxp_packet import RxPPacket
+from sliding_window import SlidingWindow
 from retransmit_timer import RetransmitTimer
 
 import Queue
@@ -22,26 +23,24 @@ class RxPConnectionStatus:
 
 
 class RxPSocket:
-    def __init__(self):
+    def __init__(self, window_size=10, debugging=False):
         # TODO verify python version ??
-
-        self.io_loop = IOLoop()
+        self.window_size = window_size
+        self.io = IOLoop()
 
         # TODO should we put on the io_loop? so it can just keep track of itself?
         self.cxn_status = RxPConnectionStatus.NONE
+
         self.retransmit_timer = RetransmitTimer()
 
-        # for python module logging msgs..
+        # for python module logging msgs.. enable if debugger param toggled
         self.logger = logging.getLogger('rxp_socket')
-        self.logger.setLevel(10)  # TODO set based on whether debugging enabled
+        self.logger.setLevel(0)
+        if debugging:
+            self.logger.setLevel(10)
 
         self.destination = None
         self.port_number = None
-
-        self.dst_adr = None
-        self.src_adr = None
-
-        self.cxn_timeout = None  # TODO set
 
         self.seq_number = 0
         self.ack_number = 0  # ""
@@ -67,25 +66,25 @@ class RxPSocket:
     def bind(self, address):
         if address:
             self.port_number = address[1]
-            self.io_loop.socket.bind(address)
+            self.io.socket.bind(address)
 
     """
     For server to accept new client socket.
     """
-
+    # TODO handle SYN flooding
     def accept(self):
         syn_received = False
         ack_received = False
 
         # NOTE: starts thread's activity. arranges for the run() method to be invoked on a separate thread of control
-        self.io_loop.start()
+        self.io.start()
 
         # wait for a syn that passes verification
         while not syn_received:
             # TODO self.cxn_status
             try:
                 # NOTE: 1st param blocks, 2nd is timeout (on queue.get)
-                syn_packet, self.destination = self.io_loop.recv_queue.get(True, 1)
+                syn_packet, self.destination = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
                 continue
 
@@ -103,19 +102,20 @@ class RxPSocket:
         )
 
         # TODO self.cxn_status
-        self.io_loop.send_queue.put((syn_ack_packet, self.destination))
+        self.io.send_queue.put((syn_ack_packet, self.destination))
         self.seq_number += 1
 
         # wait for ACK from client confirming SYN/ACK received, TODO retransmit on timeout
         while not ack_received:
             try:
-                ack_packet, address = self.io_loop.recv_queue.get(True, 1)
-            except Queue.Empty:  # TODO handle frequency of packet being sent..
+                ack_packet, address = self.io.recv_queue.get(True, 1)
+            except Queue.Empty:
                 self.logger.debug('Timed out waiting on ack during handshake. Retransmitting SYN/ACK.')
-                self.io_loop.send_queue.put((syn_ack_packet, self.destination))
+                self.io.send_queue.put((syn_ack_packet, self.destination))
                 continue
             if ack_packet and address:
-                # TODO checksum?
+                syn_ack_packet.frequency += 1
+                # TODO recalc checksum now that frequency increased
                 ack_received = self.__verify_ack(ack_packet, address, syn_ack_packet.seq_number)
                 if ack_received:
                     self.logger.debug('Received ACK during handshake. Client socket accepted')
@@ -130,7 +130,7 @@ class RxPSocket:
         self.destination = dst_adr
         syn_ack_received = False
 
-        self.io_loop.start()
+        self.io.start()
 
         # send SYN
         self.logger.debug('Sending SYN to initiate handshake.')
@@ -141,16 +141,18 @@ class RxPSocket:
             syn=True
         )
 
-        self.io_loop.send_queue.put((syn_packet, self.destination))
+        self.io.send_queue.put((syn_packet, self.destination))
         self.seq_number += 1
 
         # wait for SYN/ACK, TODO retransmit on timeout
         while not syn_ack_received:
             try:
-                syn_ack_packet, address = self.io_loop.recv_queue.get(True, 1)
+                syn_ack_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
                 self.logger.debug('Timed out waiting on SYN/ACK during handshake. Retransmitting SYN.')
-                self.io_loop.send_queue.put((syn_packet, self.destination))
+                syn_packet.frequency += 1
+                # TODO recalc checksum now that frequency increased
+                self.io.send_queue.put((syn_packet, self.destination))
                 continue
 
             if syn_ack_packet and address:
@@ -167,7 +169,7 @@ class RxPSocket:
             seq_number=self.seq_number,
             ack=True
         )
-        self.io_loop.send_queue.put((ack_packet, self.destination))
+        self.io.send_queue.put((ack_packet, self.destination))
         self.seq_number += 1
 
         self.cxn_status = RxPConnectionStatus.IDLE
@@ -206,27 +208,75 @@ class RxPSocket:
         )
         packets.append(kill_packet)  # put that shit at the end after we've added all the other packets
         self.kill_seq_number = self.seq_number
+        self.kill_sent_number = 0  # TODO need?
+        self.seq_number += 1
 
+        self.logger.debug('Placing packets in window to be sent now...')
+        window = SlidingWindow(packets, self.window_size)
         time_sent = time.time()
         time_remaining = self.retransmit_timer.timeout
-        self.logger.debug('Placing packets in window to be sent now...')
 
+        for data_packet in window.window:
+            self.io.send_queue.put((data_packet, self.destination))
 
+        while not window.is_empty():
+            try:
+                ack_packet, address = self.io.recv_queue.get(True, time_remaining)
+            except Queue.Empty:
+                # timeout, currently GO-BACK-N TODO refactor to SR
+                self.logger.debug('Timed out waiting for ack during data transmission. Retransmitting window.')
+                time_sent = time.time()
+                time_remaining = self.retransmit_timer.timeout
 
+                for data_packet in window.window:
+                    if self.kill_seq_number == data_packet.sequence_number:
+                        self.kill_sent_number += 1
+                        if self.kill_sent_number > 3:  # if retransmitted the
+                            self.logger.debug('Unable to end connection, killing now.')
+                            return
 
-        #
-        #
-        # def listen(self):
-        #
-        #
-        #
+                    data_packet.frequency += 1
+                    # TODO recalc checksum now that frequency increased
+                    self.io.send_queue.put((data_packet, self.destination))
+                continue
 
-        #
-        #
-        # def recv(self):
-        #
-        #
-        # def close(self):
+            # if still getting SYN/ACK, retransmit ACK
+            if self.__verify_syn_ack(ack_packet, address, 1):
+                self.logger.debug('Received SYN/ACK retransmission. Retransmitting ACK.')
+                ack_packet = RxPPacket(
+                    self.port_number,
+                    self.destination[1],
+                    ack_number=ack_packet.sequence_number + 1,
+                    seq_number=2,
+                    ack=True
+                )
+                self.io.send_queue.put((ack_packet, self.destination))
+                time_remaining = 0
+
+            # if first packet in pipeline is acknowledged, slide the window
+            elif self.__verify_ack(ack_packet, address, window.window[0].sequence_number):
+                self.retransmit_timer.update(ack_packet.frequency, time.time() - time_sent)
+                self.logger.debug('Updated retransmit timer. Timeout is now ' + str(self.retransmit_timer.timeout))
+
+                window.slide()
+
+                if not window.has_space():
+                    self.io.send_queue.put((window.window[-1], self.destination))
+                    self.seq_number += 1
+                    # print "executing"
+
+            # otherwise, update time remaining
+            else:
+                time_remaining -= time.time() - time_sent / 4  # decay
+                if time_remaining < time.time():
+                    time_remaining = .5
+                self.logger.debug('Bunk packet received. Time remaining before timeout: ' + str(time_remaining))
+
+    #
+    # def recv(self):
+    #
+    # def close(self):
+    #
 
     def __verify_syn(self, packet, address):
         return address == self.destination and packet.syn

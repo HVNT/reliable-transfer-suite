@@ -20,6 +20,6 @@ class SlidingWindow:
 
     def __calculate_window(self):
         if self.window_index + self.window_size < len(self.packets):
-            self.window = self.packets[self.window_index : self.window_index + self.window_size]
+            self.window = self.packets[self.window_index: self.window_index + self.window_size]
         else:
-            self.window = self.packets[self.window_index : len(self.packets)]
+            self.window = self.packets[self.window_index: len(self.packets)]
