@@ -13,9 +13,9 @@ class RxPPacket:
             src_port,
             dst_port,
             seq_number=0,
-            payload='',
             ack_number=0,
             frequency=1,
+            payload='',
             ack=False,
             syn=False,
             fin=False,
@@ -80,3 +80,9 @@ class RxPPacket:
             rst=(raw_packet[17] & 256) == 256,
             payload=raw_packet[20:]
         )
+
+    def is_killer(self):
+        return not self.syn\
+               and not self.ack\
+               and not self.fin\
+               and self.payload == ''

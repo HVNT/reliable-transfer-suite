@@ -272,9 +272,52 @@ class RxPSocket:
                     time_remaining = .5
                 self.logger.debug('Trash packet receive; time remaining before timeout: ' + str(time_remaining))
 
-    #
-    # def recv(self):
-    #
+    def recv(self):
+        kill_received = False
+        read_kill = False
+        packets = {}
+        frequencies = {}
+
+        # until connection is closed, read data
+        while not read_kill:
+            try:
+                data_packet, address = self.io.recv_queue.get(True, 1)
+            except Queue.Empty:
+                continue
+
+            if address == self.destination:
+                if frequencies.get(data_packet.seq_number):
+                    frequencies[data_packet.seq_number] += 1
+                else:
+                    frequencies[data_packet.sequence_number] = 1
+                # print data_packet.sequence_number
+
+                packets[data_packet.sequence_number] = data_packet
+                self.logger.debug('sending ack during data transfer.')
+                ack_packet = RxPPacket(
+                    self.port_number,
+                    self.destination[1],
+                    seq_number=self.seq_number,
+                    ack_number=data_packet.sequence_number + 1,
+                    frequency=frequencies[data_packet.sequence_number],
+                    ack=True
+                )
+                self.io.send_queue.put((ack_packet, self.destination))
+                self.seq_number += 1
+
+                if data_packet.is_killer():
+                    kill_received = True
+                    self.logger.debug('terminator packet detected.')
+
+                if kill_received:
+                    sorted_pkeys = sorted(packets.keys())
+                    read_kill = sorted_pkeys == range(sorted_pkeys[0], sorted_pkeys[0] + len(sorted_pkeys))
+
+        # for key in packets.keys():
+        #    print packets[key].payload
+        # print "Packet.keys length: " + str(len(packets.keys()))
+        return ''.join(map(lambda packet: packet.payload,
+                           map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
 
     def mf_close(self):
         fin_ack_received = False
