@@ -319,7 +319,7 @@ class RxPSocket:
         return ''.join(map(lambda packet: packet.payload,
                            map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
 
-    def mf_close(self):
+    def close(self):
         fin_ack_received = False
 
         self.logger.debug('Sending FIN to initiate close.')
