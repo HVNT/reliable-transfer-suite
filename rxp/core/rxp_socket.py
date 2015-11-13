@@ -110,7 +110,7 @@ class RxPSocket:
             try:
                 ack_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
-                self.logger.debug('Timed out waiting on ack during handshake. Retransmitting SYN/ACK.')
+                self.logger.debug('Timed out waiting on ack during handshake; retransmitting SYN/ACK.')
                 self.io.send_queue.put((syn_ack_packet, self.destination))
                 continue
             if ack_packet and address:
@@ -118,7 +118,7 @@ class RxPSocket:
                 # TODO recalc checksum now that frequency increased
                 ack_received = self.__verify_ack(ack_packet, address, syn_ack_packet.seq_number)
                 if ack_received:
-                    self.logger.debug('Received ACK during handshake. Client socket accepted')
+                    self.logger.debug('Received ACK during handshake; client socket accepted')
 
         self.cxn_status = RxPConnectionStatus.IDLE
 
@@ -149,7 +149,7 @@ class RxPSocket:
             try:
                 syn_ack_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
-                self.logger.debug('Timed out waiting on SYN/ACK during handshake. Retransmitting SYN.')
+                self.logger.debug('Timed out waiting on SYN/ACK during handshake; retransmitting SYN.')
                 syn_packet.frequency += 1
                 # TODO recalc checksum now that frequency increased
                 self.io.send_queue.put((syn_packet, self.destination))
@@ -161,7 +161,7 @@ class RxPSocket:
                     self.logger.debug('Received SYN/ACK during handshake.')
 
         # send ACK
-        self.logger.debug('Received SYN/ACK during handshake. sending ack to finish handshake.')
+        self.logger.debug('Received SYN/ACK during handshake; sending ACK to finish handshake.')
         ack_packet = RxPPacket(
             self.port_number,
             self.destination[1],
@@ -224,7 +224,7 @@ class RxPSocket:
                 ack_packet, address = self.io.recv_queue.get(True, time_remaining)
             except Queue.Empty:
                 # timeout, currently GO-BACK-N TODO refactor to SR
-                self.logger.debug('Timed out waiting for ack during data transmission. Retransmitting window.')
+                self.logger.debug('Timed out waiting for ack during data transmission; retransmitting window.')
                 time_sent = time.time()
                 time_remaining = self.retransmit_timer.timeout
 
@@ -232,7 +232,7 @@ class RxPSocket:
                     if self.kill_seq_number == data_packet.sequence_number:
                         self.kill_sent_number += 1
                         if self.kill_sent_number > 3:  # if retransmitted the
-                            self.logger.debug('Unable to end connection, killing now.')
+                            self.logger.debug('Unable to end connection; killing now.')
                             return
 
                     data_packet.frequency += 1
@@ -242,7 +242,7 @@ class RxPSocket:
 
             # if still getting SYN/ACK, retransmit ACK
             if self.__verify_syn_ack(ack_packet, address, 1):
-                self.logger.debug('Received SYN/ACK retransmission. Retransmitting ACK.')
+                self.logger.debug('Received SYN/ACK retransmission; retransmitting ACK.')
                 ack_packet = RxPPacket(
                     self.port_number,
                     self.destination[1],
@@ -256,7 +256,7 @@ class RxPSocket:
             # if first packet in pipeline is acknowledged, slide the window
             elif self.__verify_ack(ack_packet, address, window.window[0].sequence_number):
                 self.retransmit_timer.update(ack_packet.frequency, time.time() - time_sent)
-                self.logger.debug('Updated retransmit timer. Timeout is now ' + str(self.retransmit_timer.timeout))
+                self.logger.debug('Updated retransmit timer; timeout is now ' + str(self.retransmit_timer.timeout))
 
                 window.slide()
 
@@ -270,13 +270,45 @@ class RxPSocket:
                 time_remaining -= time.time() - time_sent / 4  # decay
                 if time_remaining < time.time():
                     time_remaining = .5
-                self.logger.debug('Bunk packet received. Time remaining before timeout: ' + str(time_remaining))
+                self.logger.debug('Trash packet receive; time remaining before timeout: ' + str(time_remaining))
 
     #
     # def recv(self):
     #
-    # def close(self):
-    #
+
+    def mf_close(self):
+        fin_ack_received = False
+
+        self.logger.debug('Sending FIN to initiate close.')
+        fin_packet = RxPPacket(
+            self.port_number,
+            self.destination[1],
+            seq_number=self.seq_number,
+            fin=True
+        )
+        self.io.send_queue.put((fin_packet, self.destination))
+        self.seq_number += 1
+
+        # TODO handle when just fin received.. more than this one case.. what if they both FIN at the same time..
+        while not fin_ack_received:
+            try:
+                fin_ack_packet, address = self.io.recv_queue.get(True, 1)
+            except Queue.Empty:
+                self.logger.debug('Timed out waiting for FIN/ACK during close; closing...')
+                break
+
+            if self.__verify_fin_ack(fin_ack_packet, address, fin_packet.seq_number):
+                fin_ack_received = True
+                self.logger.debug('Received FIN/ACK during close; sending ACK to finish close.')
+                ack_packet = RxPPacket(
+                    self.port_number,
+                    self.destination[1],
+                    seq_number=self.seq_number,
+                    ack_number=fin_ack_packet.sequence_number + 1,
+                    ack=True
+                )
+                self.io.send_queue.put((ack_packet, self.destination))
+                self.seq_number += 1
 
     def __verify_syn(self, packet, address):
         return address == self.destination and packet.syn
