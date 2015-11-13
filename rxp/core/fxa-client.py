@@ -26,7 +26,7 @@ def main():
     # TODO should we be asking for the window size here?
     window = int(raw_input("Enter a window size W: "))
 
-    # set up socket
+    # set up client socket
     socket = RxPSocket(window, debugging=True)
     socket.assign(int(client_udp_port))
     socket.bind(("0.0.0.0", int(client_udp_port)))
