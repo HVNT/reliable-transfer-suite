@@ -1,14 +1,10 @@
 import socket
+from rxpexception import RxPException
 
 __author__ = 'hunt'
 
-
-"""
-enum that describes the connection status of a socket
-"""
-
-
 class RxPConnectionStatus():
+""" enum that describes the connection status of a socket """
     NONE = "no_conn"
     IDLE = "idle"
     SEND = "sending"
@@ -51,8 +47,8 @@ class RxPSocket(object):
 
         if self.src_adr:
             self._socket.bind(self.src_adr)
-        # else
-            # TODO raise exception
+        else
+            raise RxPException("Invalid source address")
 
     """ TODO fix comment
     connects to destAddr given in format (ipaddr, portNum). Uses a handshake. The
@@ -66,8 +62,11 @@ class RxPSocket(object):
 
 
 
-        # else:
-            # TODO raise exception
+        else:
+			if !dst_adr:
+				raise RxPException("Invalid destination address")
+			if !self.src_adr:
+				raise RxpException("Socket not bound")
     #
     #
     # def listen(self):
