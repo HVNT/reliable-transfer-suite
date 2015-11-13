@@ -46,7 +46,7 @@ def main():
 
         f = open(message, 'r')
         contents = f.read()
-        print "Streaming contents of file requested"
+        print "Streaming contents of file requested."
         socket.send(contents)
 
         f.close()

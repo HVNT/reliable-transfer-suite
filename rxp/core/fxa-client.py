@@ -46,14 +46,14 @@ def main():
         elif command[0] == "get":
             socket.send(command[1])
 
-            print "Sending file recv request: " + command[1]
+            print "Sending request to get the file: " + command[1]
             read_val = socket.recv()
 
-            print "Recieved contents"
+            print "Received file contents."
             f = open(command[1] + "__copy", 'w')
             f.write(read_val)
 
-            print "Saved file as: " + command[1] + "__copy"
+            print "Saved file as: " + command[1] + "__copy."
             f.close()
 
         elif command[0] == "post":
@@ -64,7 +64,7 @@ def main():
             # TODO..
 
         else:
-            print "Invalid command"
+            print "Invalid command."
 
 
 if __name__ == '__main__':
