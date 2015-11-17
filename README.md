@@ -1,12 +1,23 @@
 # reliable-transfer-suite
 Team Members:
+
 	Hunter Brennick (@gatech.edu)
 	Sherman Mathews (smathews6@gatech.edu)
-Class: 		CS 3251, Section B
-Date:		11/27/2015
-Assignment:	Programming Assignment 2 (RxP)
+	
+Class: 		
+
+	CS 3251, Section B
+
+Date:		
+
+	11/27/2015
+
+Assignment:	
+
+	Programming Assignment 2 (RxP)
 
 Files:
+
 	fxa_client.py:			represents an fxa_client
 	fxa_server.py: 			represents an fxa_server
 	io_loop.py:				a loop used for handling simultaneous sending and receiving
@@ -17,6 +28,7 @@ Files:
 	sliding_window.py:		represents a sliding window
 
 Instructions:
+
 	Note: This code was tested using Python 3.4, so please use that to run files.
 
 	To run the client program:
@@ -37,5 +49,5 @@ Instructions:
 			P is the UDP port number of NetEmu
 		upon program start, user will be prompted for desired window size
 
-Updated Protocol and API description:
-Bugs and Limitations:
+Updated Protocol and API description: TODO
+Bugs and Limitations: TODO
