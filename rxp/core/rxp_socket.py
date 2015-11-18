@@ -20,6 +20,9 @@ class RxPConnectionStatus:
     IDLE = "idle"
     SEND = "sending"
     RECV = "receiving"
+    FIN1 = "fin_wait_1"
+    FIN2 = "fin_wait_2"
+    TMWT = "timed_wait"
 
 
 class RxPSocket:
@@ -326,6 +329,7 @@ class RxPSocket:
         )
         self.io.send_queue.put((fin_packet, self.destination))
         self.seq_number += 1
+        self.cxn_status = RxPConnectionStatus.FIN1
 
         # TODO handle when just fin received.. more than this one case.. what if they both FIN at the same time..
         while not fin_ack_received:
@@ -333,8 +337,10 @@ class RxPSocket:
                 fin_ack_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
                 self.logger.debug('Timed out waiting for FIN/ACK during close; closing...')
+
                 break
 
+            # Case: Received FIN+ACK going to Timed Wait
             if self.__verify_fin_ack(fin_ack_packet, address, fin_packet.seq_number):
                 fin_ack_received = True
                 self.logger.debug('Received FIN/ACK during close; sending ACK to finish close.')
@@ -347,6 +353,10 @@ class RxPSocket:
                 )
                 self.io.send_queue.put((ack_packet, self.destination))
                 self.seq_number += 1
+                self.cxn_status = RxPConnectionStatus.TMWT
+
+            # TODO Case: Fin Wait 2
+            
 
     def __verify_syn(self, packet, address):
         return address == self.destination and packet.syn
