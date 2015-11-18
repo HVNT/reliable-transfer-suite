@@ -14,6 +14,7 @@ __author__ = 'hunt'
 """ enum that describes the
 connection status of a socket """
 
+logging.basicConfig()
 
 class RxPConnectionStatus:
     NONE = "no_conn"
@@ -75,6 +76,7 @@ class RxPSocket:
             # TODO self.cxn_status
             try:
                 # NOTE: 1st param blocks, 2nd is timeout (on queue.get)
+                self.logger.debug('About to attempt to receive a SYN packet.')
                 syn_packet, self.destination = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
                 continue
