@@ -37,7 +37,6 @@ class RxPPacket:
         self.window_size = window_size
         self.payload = payload
 
-        # TODO
         self.checksum = self.__class__.calculate_checksum(self.pickle())
 
     @classmethod
