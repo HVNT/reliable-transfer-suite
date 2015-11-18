@@ -47,18 +47,6 @@ class RxPSocket:
 
         self.resend_limit = 100  # TODO need? appropriate default?
 
-        # initialize UDP socket
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-    """
-    Takes in src address and binds UDP socket to specified port.
-    Should be getting called by a client application.
-    """
-
-    def assign(self, port_number):
-        if port_number:
-            self.port_number = port_number
-
     """
     Takes in src address and binds UDP socket to specified port.
     """
@@ -92,11 +80,11 @@ class RxPSocket:
                 syn_received = self.__verify_syn(syn_packet, self.destination)
 
         # send SYN/ACK
-        self.logger.debug('Received SYN during handshake. sending SYN/ACK to progress handshake.')
+        self.logger.debug('Received SYN during handshake; sending SYN/ACK to progress handshake.')
         syn_ack_packet = RxPPacket(
             self.port_number,
             self.destination[1],
-            ack_number=syn_packet.sequence_number + 1,  # use SYN recvd seq number for ACK
+            ack_number=syn_packet.seq_number + 1,  # use SYN recvd seq number for ACK
             ack=True,
             syn=True
         )
@@ -111,11 +99,13 @@ class RxPSocket:
                 ack_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
                 self.logger.debug('Timed out waiting on ack during handshake; retransmitting SYN/ACK.')
-                self.io.send_queue.put((syn_ack_packet, self.destination))
-                continue
-            if ack_packet and address:
                 syn_ack_packet.frequency += 1
                 # TODO recalc checksum now that frequency increased
+                # TODO retransmit timer, time out
+                self.io.send_queue.put((syn_ack_packet, self.destination))
+                continue
+
+            if ack_packet and address:
                 ack_received = self.__verify_ack(ack_packet, address, syn_ack_packet.seq_number)
                 if ack_received:
                     self.logger.debug('Received ACK during handshake; client socket accepted')
@@ -144,7 +134,7 @@ class RxPSocket:
         self.io.send_queue.put((syn_packet, self.destination))
         self.seq_number += 1
 
-        # wait for SYN/ACK, TODO retransmit on timeout
+        # wait for SYN/ACK
         while not syn_ack_received:
             try:
                 syn_ack_packet, address = self.io.recv_queue.get(True, 1)
@@ -152,6 +142,7 @@ class RxPSocket:
                 self.logger.debug('Timed out waiting on SYN/ACK during handshake; retransmitting SYN.')
                 syn_packet.frequency += 1
                 # TODO recalc checksum now that frequency increased
+                # TODO retransmit timer, time out
                 self.io.send_queue.put((syn_packet, self.destination))
                 continue
 
@@ -160,12 +151,13 @@ class RxPSocket:
                 if syn_ack_received:
                     self.logger.debug('Received SYN/ACK during handshake.')
 
+        # TODO resending ACK if another SYN/ACK is received? AKA server never gets the clients ACK
         # send ACK
         self.logger.debug('Received SYN/ACK during handshake; sending ACK to finish handshake.')
         ack_packet = RxPPacket(
             self.port_number,
             self.destination[1],
-            ack_number=syn_ack_packet.sequence_number + 1,
+            ack_number=syn_ack_packet.seq_number + 1,
             seq_number=self.seq_number,
             ack=True
         )
@@ -178,7 +170,7 @@ class RxPSocket:
     For client or server to send a msg. The 'kill_packet' is used
     to inform client and server can know when we done sending.
     """
-
+    # TODO get window size available from client and respond appropriately
     def send(self, msg):
         floor = 0
         payload_size = 512
@@ -207,9 +199,9 @@ class RxPSocket:
             seq_number=self.seq_number
         )
         packets.append(kill_packet)  # put that shit at the end after we've added all the other packets
+        self.seq_number += 1
         self.kill_seq_number = self.seq_number
         self.kill_sent_number = 0  # TODO need?
-        self.seq_number += 1
 
         self.logger.debug('Placing packets in window to be sent now...')
         window = SlidingWindow(packets, self.window_size)
@@ -229,7 +221,7 @@ class RxPSocket:
                 time_remaining = self.retransmit_timer.timeout
 
                 for data_packet in window.window:
-                    if self.kill_seq_number == data_packet.sequence_number:
+                    if self.kill_seq_number == data_packet.seq_number:
                         self.kill_sent_number += 1
                         if self.kill_sent_number > 3:  # if retransmitted the
                             self.logger.debug('Unable to end connection; killing now.')
@@ -246,7 +238,7 @@ class RxPSocket:
                 ack_packet = RxPPacket(
                     self.port_number,
                     self.destination[1],
-                    ack_number=ack_packet.sequence_number + 1,
+                    ack_number=ack_packet.seq_number + 1,
                     seq_number=2,
                     ack=True
                 )
@@ -254,12 +246,13 @@ class RxPSocket:
                 time_remaining = 0
 
             # if first packet in pipeline is acknowledged, slide the window
-            elif self.__verify_ack(ack_packet, address, window.window[0].sequence_number):
+            elif self.__verify_ack(ack_packet, address, window.window[0].seq_number):
                 self.retransmit_timer.update(ack_packet.frequency, time.time() - time_sent)
                 self.logger.debug('Updated retransmit timer; timeout is now ' + str(self.retransmit_timer.timeout))
 
                 window.slide()
 
+                # TODO confusing
                 if not window.has_room():
                     self.io.send_queue.put((window.window[-1], self.destination))
                     self.seq_number += 1
@@ -272,6 +265,7 @@ class RxPSocket:
                     time_remaining = .5
                 self.logger.debug('Trash packet receive; time remaining before timeout: ' + str(time_remaining))
 
+    # TODO communicate window size available.. keep track of window size available..
     def recv(self):
         kill_received = False
         read_kill = False
@@ -286,20 +280,21 @@ class RxPSocket:
                 continue
 
             if address == self.destination:
+                # TODO just get frequency of data_packet ??
                 if frequencies.get(data_packet.seq_number):
                     frequencies[data_packet.seq_number] += 1
                 else:
-                    frequencies[data_packet.sequence_number] = 1
-                # print data_packet.sequence_number
+                    frequencies[data_packet.seq_number] = 1
+                # print data_packet.seq_number
 
-                packets[data_packet.sequence_number] = data_packet
-                self.logger.debug('sending ack during data transfer.')
+                packets[data_packet.seq_number] = data_packet
+                self.logger.debug('Sending ack during data transfer.')
                 ack_packet = RxPPacket(
                     self.port_number,
                     self.destination[1],
                     seq_number=self.seq_number,
-                    ack_number=data_packet.sequence_number + 1,
-                    frequency=frequencies[data_packet.sequence_number],
+                    ack_number=data_packet.seq_number + 1,
+                    frequency=frequencies[data_packet.seq_number],
                     ack=True
                 )
                 self.io.send_queue.put((ack_packet, self.destination))
@@ -307,7 +302,7 @@ class RxPSocket:
 
                 if data_packet.is_killer():
                     kill_received = True
-                    self.logger.debug('terminator packet detected.')
+                    self.logger.debug('Kill packet detected.')
 
                 if kill_received:
                     sorted_pkeys = sorted(packets.keys())

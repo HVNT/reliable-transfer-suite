@@ -55,7 +55,7 @@ class RxPPacket:
             raise ParseException
 
         # essentially here we are "parsing" the checksum to verify it quick before we return the initialized packet..
-        # grabbing raw checksum from packet.. step into checksum byte index
+        # grabbing raw checksum from packet.. index into checksum bytes
         # according to new RxPPacket header structure checksum should be 2 bytes starting @byte17
         raw_checksum = (ord(raw_packet[18]) << 8) | ord(raw_packet[19])
         zeroed_packet = raw_packet[0: 18] + chr(0) + chr(0)

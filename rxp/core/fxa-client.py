@@ -28,7 +28,6 @@ def main():
 
     # set up client socket
     socket = RxPSocket(window, debugging=True)
-    socket.assign(int(client_udp_port))
     socket.bind(("0.0.0.0", int(client_udp_port)))
 
     # connect socket
