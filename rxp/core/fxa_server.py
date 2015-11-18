@@ -10,7 +10,7 @@ def main():
     if len(sys.argv) != 4:
         print "Invalid arguments."
         print "USAGE: FxA-server X A P"
-        print "X: the port number at which the fta-server's UDP socket should bind to" \
+        print "X: the port number at which the fxa-server's UDP socket should bind to" \
               "Please remember that this port number should be an odd number."
         print "A: the IP address of NetEmu"
         print "P: the UDP port number of NetEmu"
