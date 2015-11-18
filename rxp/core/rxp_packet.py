@@ -1,6 +1,7 @@
-__author__ = 'hunt'
-
 import math
+import hashlib
+
+__author__ = 'hunt'
 
 
 class ParseException(Exception):
@@ -31,23 +32,24 @@ class RxPPacket:
         self.syn = syn
         self.fin = fin
         self.rst = rst
-        self.data_offset = int(math.ceil(1.0 * len(payload) / 4))
+        self.data_offset = int(math.ceil(1.0 * len(payload) / 4))  # TODO ?? shouldnt this be static?
         self.checksum = 0
         self.window_size = window_size
         self.payload = payload
 
         # TODO
-        # self.checksum = self.__class__.calculate_checksum(self.serialize())
+        self.checksum = self.__class__.calculate_checksum(self.pickle())
 
     @classmethod
     def calculate_checksum(self, raw_packet):
-        return 1
-
-    # TODO  pickle ("serialize")
+        checksum_algorithm = hashlib.md5()
+        checksum_algorithm.update(raw_packet)
+        return int(checksum_algorithm.hexdigest(), 16) & int(math.pow(2, 16) - 1)
 
     """
     unpickle = "parsing"
     """
+
     @classmethod
     def unpickle(self, raw_packet):
         # 20 bytes of headers min req
@@ -66,6 +68,7 @@ class RxPPacket:
 
         raw_packet = map(ord, raw_packet)
 
+        # TODO checksum
         # TODO check unary logic parsing out ctrl bits && payload set
         return RxPPacket(
             (raw_packet[0] << 8) | raw_packet[1],
@@ -81,8 +84,33 @@ class RxPPacket:
             payload=raw_packet[20:]
         )
 
+    def pickle(self):
+        BIT_MASK_4 = 255 << 24
+        BIT_MASK_3 = 255 << 16
+        BIT_MASK_2 = 255 << 8
+        BIT_MASK_1 = 255
+
+        words = [  # each index = 32 bits
+                   (self.src_port << 16) + self.dst_port,
+                   self.seq_number,
+                   self.ack_number,
+                   self.window_size,
+                   (self.frequency << 27) +
+                   (int(self.ack) << 26) + (int(self.syn) << 25) + (int(self.fin) << 24) + (int(self.rst) << 25) +
+                   (self.data_offset << 16) + self.checksum,
+                   ]
+        byte_array = []
+
+        for word in words:
+            byte_array.append((word & BIT_MASK_4) >> 24)
+            byte_array.append((word & BIT_MASK_3) >> 16)
+            byte_array.append((word & BIT_MASK_2) >> 8)
+            byte_array.append(word & BIT_MASK_1)
+
+        return ''.join(map(chr, byte_array)) + self.payload
+
     def is_killer(self):
-        return not self.syn\
-               and not self.ack\
-               and not self.fin\
+        return not self.syn \
+               and not self.ack \
+               and not self.fin \
                and self.payload == ''

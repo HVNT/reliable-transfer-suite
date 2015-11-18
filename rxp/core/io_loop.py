@@ -23,7 +23,7 @@ class IOLoop(Thread):
         while True:
             try:
                 packet, address = self.send_queue.get(True, 0.1)
-                self.socket.sendto(packet.serialize(), address)
+                self.socket.sendto(packet.pickle(), address)
             except Queue.Empty:
                 pass
 
