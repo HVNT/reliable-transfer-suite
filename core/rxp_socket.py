@@ -74,7 +74,6 @@ class RxPSocket:
             # TODO self.cxn_status
             try:
                 # NOTE: 1st param blocks, 2nd is timeout (on queue.get)
-                self.logger.debug('About to attempt to receive a SYN packet.')
                 syn_packet, self.destination = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
                 continue
@@ -312,8 +311,8 @@ class RxPSocket:
                     sorted_pkeys = sorted(packets.keys())
                     read_kill = sorted_pkeys == range(sorted_pkeys[0], sorted_pkeys[0] + len(sorted_pkeys))
 
-        # for key in packets.keys():
-        #    print packets[key].payload
+        for key in packets.keys():
+           print packets[key].payload
         # print "Packet.keys length: " + str(len(packets.keys()))
 
         return ''.join(map(lambda packet: packet.payload, map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
