@@ -23,13 +23,15 @@ class IOLoop(Thread):
         while True:
             try:
                 packet, address = self.send_queue.get(True, 0.1)
-                self.socket.sendto(packet.pickle(), address)
+                print packet
+                self.socket.sendto(packet.serialize(), address)
             except Queue.Empty:
                 pass
 
             try:
                 packet, address = self.socket.recvfrom(4096)
-                packet = RxPPacket.unpickle(packet)
+                print "Recvd packet from: " + str(address[0]) + str(address[1])
+                packet = RxPPacket.parse(packet)
                 self.recv_queue.put((packet, address))
             except (socket.timeout, ParseException), e:
                 pass

@@ -37,7 +37,7 @@ class RxPPacket:
         self.window_size = window_size
         self.payload = payload
 
-        self.checksum = self.__class__.calculate_checksum(self.pickle())
+        # self.checksum = self.__class__.calculate_checksum(self.serialize())
 
     @classmethod
     def calculate_checksum(self, raw_packet):
@@ -45,12 +45,8 @@ class RxPPacket:
         checksum_algorithm.update(raw_packet)
         return int(checksum_algorithm.hexdigest(), 16) & int(math.pow(2, 16) - 1)
 
-    """
-    unpickle = "parsing"
-    """
-
     @classmethod
-    def unpickle(self, raw_packet):
+    def parse(self, raw_packet):
         # 20 bytes of headers min req
         if len(raw_packet) < 20:
             raise ParseException
@@ -83,30 +79,34 @@ class RxPPacket:
             payload=raw_packet[20:]
         )
 
-    def pickle(self):
+    def serialize(self):
         BIT_MASK_4 = 255 << 24
         BIT_MASK_3 = 255 << 16
         BIT_MASK_2 = 255 << 8
         BIT_MASK_1 = 255
 
-        words = [  # each index = 32 bits
-                   (self.src_port << 16) + self.dst_port,
-                   self.seq_number,
-                   self.ack_number,
-                   self.window_size,
-                   (self.frequency << 27) +
-                   (int(self.ack) << 26) + (int(self.syn) << 25) + (int(self.fin) << 24) + (int(self.rst) << 25) +
-                   (self.data_offset << 16) + self.checksum,
-                   ]
+        # each index = 32 bits
+        words = [
+            (self.src_port << 16) + self.dst_port,
+            self.seq_number,
+            self.ack_number,
+            self.window_size,
+            (self.frequency << 27) +
+            (int(self.ack) << 26) + (int(self.syn) << 25) + (int(self.fin) << 24) + (int(self.rst) << 25) +
+            (self.data_offset << 16) + self.checksum,
+        ]
         byte_array = []
 
         for word in words:
+            print word
             byte_array.append((word & BIT_MASK_4) >> 24)
             byte_array.append((word & BIT_MASK_3) >> 16)
             byte_array.append((word & BIT_MASK_2) >> 8)
             byte_array.append(word & BIT_MASK_1)
 
-        return ''.join(map(chr, byte_array)) + self.payload
+        serialized_packet = ''.join(map(chr, byte_array)) + self.payload
+        print serialized_packet
+        return serialized_packet
 
     def is_killer(self):
         return not self.syn \
