@@ -1,5 +1,6 @@
 import sys
 import os.path
+import os
 
 from rxp_socket import RxPSocket
 
@@ -40,8 +41,9 @@ def main():
 
         if message == '':
             pass
-            
-        if not os.path.isfile(message):
+
+        if not os.path.isfile(str(os.getcwd() + "/" + message)):
+            print "Tried to get file from: ", str(os.getcwd() + "/" + message)
             print "Sorry, the file requested does not exist!"
             pass
 
