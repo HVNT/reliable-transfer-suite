@@ -30,8 +30,9 @@ class IOLoop(Thread):
 
             try:
                 packet, address = self.socket.recvfrom(4096)
-                print "Recvd packet from: " + str(address[0]) + ":" + str(address[1])
                 packet = RxPPacket.parse(packet)
+                print "Recvd packet from: " + str(address[0]) + ":" + str(address[1])
+                print "Packet seq #: " + str(packet.payload)
                 self.recv_queue.put((packet, address))
             except (socket.timeout, ParseException), e:
                 pass

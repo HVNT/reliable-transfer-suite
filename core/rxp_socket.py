@@ -160,8 +160,8 @@ class RxPSocket:
         ack_packet = RxPPacket(
             self.port_number,
             self.destination[1],
-            ack_number=syn_ack_packet.seq_number + 1,
             seq_number=self.seq_number,
+            ack_number=syn_ack_packet.seq_number + 1,
             ack=True
         )
         self.io.send_queue.put((ack_packet, self.destination))
@@ -279,7 +279,6 @@ class RxPSocket:
         while not read_kill:
             try:
                 data_packet, address = self.io.recv_queue.get(True, 1)
-                data_packet.print_packet()
             except Queue.Empty:
                 continue
 

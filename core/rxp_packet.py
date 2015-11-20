@@ -15,25 +15,25 @@ class RxPPacket:
             dst_port,
             seq_number=0,
             ack_number=0,
+            window_size=1024,
             frequency=1,
-            payload='',
             ack=False,
             syn=False,
             fin=False,
-            window_size=1024
+            payload=''
     ):
         self.src_port = src_port
         self.dst_port = dst_port
         self.seq_number = seq_number
         self.ack_number = ack_number
+        self.window_size = window_size
         self.frequency = frequency
         self.ack = ack
         self.syn = syn
         self.fin = fin
+        self.payload = payload or ''
         self.data_offset = int(math.ceil(1.0 * len(payload) / 4))  # TODO ?? shouldnt this be static?
         self.checksum = 0
-        self.window_size = window_size
-        self.payload = payload
         self.checksum = self.__class__.calculate_checksum(self.serialize())
 
     @classmethod
@@ -52,7 +52,7 @@ class RxPPacket:
         # grabbing raw checksum from packet.. index into checksum bytes
         # according to new RxPPacket header structure checksum should be 2 bytes starting @byte17
         raw_checksum = (ord(data[18]) << 8) | ord(data[19])
-        zeroed_packet = data[0: 18] + chr(0) + chr(0)
+        zeroed_packet = data[0: 18] + chr(0) + chr(0) + data[20:]
         calculated_checksum = self.calculate_checksum(zeroed_packet)
 
         if raw_checksum != calculated_checksum:
@@ -60,7 +60,7 @@ class RxPPacket:
 
         raw_packet = map(ord, data)
 
-        return RxPPacket(
+        packet = RxPPacket(
             (raw_packet[0] << 8) | raw_packet[1],
             (raw_packet[2] << 8) | raw_packet[3],
             seq_number=raw_packet[4] << 24 | raw_packet[5] << 16 | raw_packet[6] << 8 | raw_packet[7],
@@ -72,6 +72,8 @@ class RxPPacket:
             fin=(raw_packet[16] & 1) == 1,
             payload=data[20: 20 + raw_packet[17] * 4]  # data offset..
         )
+
+        return packet
 
     def serialize(self):
         BIT_MASK_4 = 255 << 24
@@ -110,6 +112,7 @@ class RxPPacket:
                and self.payload == ''
 
     def print_packet(self):
+        print "\n"
         print "src port: " + str(self.src_port)
         print "dst port: " + str(self.dst_port)
         print "seq #: " + str(self.seq_number)
@@ -121,4 +124,6 @@ class RxPPacket:
         print "data offset: " + str(self.data_offset)
         print "window size: " + str(self.window_size)
         print "checksum: " + str(self.checksum)
-        print "payload: " + str(self.payload)
+        print "payload: pp " + str(self.payload) + " pp"
+
+
