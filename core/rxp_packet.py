@@ -111,7 +111,7 @@ class RxPPacket:
 
     def print_packet(self):
         print "src port: " + str(self.src_port)
-        print "dst port: " + str(self.src_port)
+        print "dst port: " + str(self.dst_port)
         print "seq #: " + str(self.seq_number)
         print "ack #: " + str(self.ack_number)
         print "frequency : " + str(self.frequency)
