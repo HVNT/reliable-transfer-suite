@@ -86,7 +86,7 @@ def send(packet):
     sock.sendto(packet[0],(ip,outport))
 
     # hexdump the data so that we can see what changed
-    print "packet sent to :", packet[1]
+    print "packet sent to :", (ip, outport)
     hexvalue = binascii.hexlify(packet[0]) #.decode()
     print ['0x'+hexvalue[i:i+2] for i in range(0, len(hexvalue),2)]
 
