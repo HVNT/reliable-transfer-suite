@@ -16,6 +16,7 @@ connection status of a socket """
 
 logging.basicConfig()
 
+
 class RxPConnectionStatus:
     NONE = "no_conn"
     IDLE = "idle"
@@ -155,7 +156,7 @@ class RxPSocket:
 
         # TODO resending ACK if another SYN/ACK is received? AKA server never gets the clients ACK
         # send ACK
-        self.logger.debug('Received SYN/ACK during handshake; sending ACK to finish handshake.')
+        self.logger.debug('Sending ACK to finish handshake.')
         ack_packet = RxPPacket(
             self.port_number,
             self.destination[1],
@@ -278,6 +279,7 @@ class RxPSocket:
         while not read_kill:
             try:
                 data_packet, address = self.io.recv_queue.get(True, 1)
+                data_packet.print_packet()
             except Queue.Empty:
                 continue
 
@@ -313,8 +315,8 @@ class RxPSocket:
         # for key in packets.keys():
         #    print packets[key].payload
         # print "Packet.keys length: " + str(len(packets.keys()))
-        return ''.join(map(lambda packet: packet.payload,
-                           map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
+
+        return ''.join(map(lambda packet: packet.payload, map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
 
     def close(self):
         fin_ack_received = False

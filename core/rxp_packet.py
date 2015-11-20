@@ -58,7 +58,6 @@ class RxPPacket:
         if raw_checksum != calculated_checksum:
             raise ParseException
 
-        print str(data)
         raw_packet = map(ord, data)
 
         return RxPPacket(
@@ -109,3 +108,17 @@ class RxPPacket:
                and not self.ack \
                and not self.fin \
                and self.payload == ''
+
+    def print_packet(self):
+        print "src port: " + str(self.src_port)
+        print "dst port: " + str(self.src_port)
+        print "seq #: " + str(self.seq_number)
+        print "ack #: " + str(self.ack_number)
+        print "frequency : " + str(self.frequency)
+        print "is ack: " + str(self.ack)
+        print "is syn: " + str(self.syn)
+        print "is fin: " + str(self.fin)
+        print "data offset: " + str(self.data_offset)
+        print "window size: " + str(self.window_size)
+        print "checksum: " + str(self.checksum)
+        print "payload: " + str(self.payload)
