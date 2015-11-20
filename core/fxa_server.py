@@ -40,7 +40,7 @@ def main():
 
         if message == '':
             pass
-            
+
         if not os.path.isfile(message):
             print "Sorry, the file requested does not exist!"
             pass
