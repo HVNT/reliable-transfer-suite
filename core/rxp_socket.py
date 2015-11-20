@@ -102,7 +102,7 @@ class RxPSocket:
             except Queue.Empty:
                 self.logger.debug('Timed out waiting on ack during handshake; retransmitting SYN/ACK.')
                 syn_ack_packet.frequency += 1
-                # TODO recalc checksum now that frequency increased
+                syn_ack_packet.update_checksum()
                 # TODO retransmit timer, time out
                 self.io.send_queue.put((syn_ack_packet, self.destination))
                 continue
@@ -143,7 +143,7 @@ class RxPSocket:
             except Queue.Empty:
                 self.logger.debug('Timed out waiting on SYN/ACK during handshake; retransmitting SYN.')
                 syn_packet.frequency += 1
-                # TODO recalc checksum now that frequency increased
+                syn_packet.update_checksum()
                 # TODO retransmit timer, time out
                 self.io.send_queue.put((syn_packet, self.destination))
                 continue
