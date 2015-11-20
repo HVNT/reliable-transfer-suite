@@ -281,6 +281,7 @@ class RxPSocket:
                 data_packet, address = self.io.recv_queue.get(True, 1)
                 data_packet.print_packet()
             except Queue.Empty:
+                print "Queue is empty. Restarting Loop."
                 continue
 
             if address == self.destination:

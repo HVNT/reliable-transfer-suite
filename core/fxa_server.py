@@ -40,16 +40,23 @@ def main():
 
         if message == '':
             pass
+            
         if not os.path.isfile(message):
             print "Sorry, the file requested does not exist!"
             pass
 
-        f = open(message, 'r')
-        contents = f.read()
-        print "Streaming contents of file requested."
-        socket.send(contents)
+        try:
+            f = open(message, 'r')
+            contents = f.read()
+            print "Streaming contents of file requested."
+            socket.send(contents)
+            f.close()
 
-        f.close()
+        except:
+            print "No file to stream."
+            # TODO what to send? socket.send("")
+            pass
+
         raw_input("Press enter to accept more connections.")  # ??
 
 
