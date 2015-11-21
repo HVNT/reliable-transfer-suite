@@ -37,10 +37,16 @@ def main():
         command = raw_input("Enter a command (get F, post F, disconnect): ")
         command = command.split()
 
-        if command[0] == "disconnect":
-            # disconnect from server
-            socket.close()
-            sys.exit(0)
+        if len(command) > 2:
+            print "Invalid number of parameters. Please check your command."
+
+        elif command[0] == "disconnect":
+            if len(command) == 1:
+                # disconnect from server
+                socket.close()
+                sys.exit(0)
+            else:
+                print "Invalid number of parameters. Please check your command."
 
         elif command[0] == "get":
             socket.send(command[1])
