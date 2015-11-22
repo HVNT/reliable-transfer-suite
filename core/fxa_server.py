@@ -17,6 +17,11 @@ def main():
         print "P: the UDP port number of NetEmu"
         sys.exit(0)
 
+    # check if valid port
+    if int(sys.argv[1]) % 2 != 0 or not(1024 <= int(sys.argv[1]) <= 65535):
+        print "Invalid port. The port number must be odd and between 1024 and 65535."
+        sys.exit(0)
+
     server_udp_port = sys.argv[1]
     net_emu_ip = sys.argv[2]
     net_emu_udp_port = sys.argv[3]
@@ -55,8 +60,8 @@ def main():
             f.close()
 
         except:
-            print "No file to stream."
-            # TODO what to send? socket.send("")
+            print "No file to stream. Letting client know."
+            socket.send("ERR:FILE_NOT_FOUND")
             pass
 
         raw_input("Press enter to accept more connections.")  # ??

@@ -16,7 +16,10 @@ def main():
         print "P: the UDP port number of NetEmu."
         sys.exit(0)
 
-    # TODO check if port number appropriate for a client..
+    print int(sys.argv[1])
+    if int(sys.argv[1]) % 2 != 0 or not(1024 <= int(sys.argv[1]) <= 65535):
+        print "Invalid port. The port number must be even and between 1024 and 65535."
+        sys.exit(0)
 
     # get params
     client_udp_port = sys.argv[1]
@@ -37,7 +40,7 @@ def main():
         command = raw_input("Enter a command (get F, post F, disconnect): ")
         command = command.split()
 
-        if len(command) > 2:
+        if len(command) > 2 or len(command) == 0:
             print "Invalid number of parameters. Please check your command."
 
         elif command[0] == "disconnect":
@@ -54,12 +57,16 @@ def main():
             print "Sending request to get the file: " + command[1]
             read_val = socket.recv()
 
-            print "Received file contents."
-            f = open(command[1] + "__copy", 'w')
-            f.write(read_val)
+            #TODO this seems hacky?
+            if read_val == "ERR:FILE_NOT_FOUND":
+                print command[1] + " not found."
+            else:
+                print "Received file contents."
+                f = open(command[1] + "__copy", 'w')
+                f.write(read_val)
 
-            print "Saved file as: " + command[1] + "__copy."
-            f.close()
+                print "Saved file as: " + command[1] + "__copy."
+                f.close()
 
         elif command[0] == "post":
             socket.send(command[1])

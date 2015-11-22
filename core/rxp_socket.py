@@ -230,7 +230,7 @@ class RxPSocket:
                             return
 
                     data_packet.frequency += 1
-                    # TODO recalc checksum now that frequency increased
+                    data_packet.update_checksum()
                     self.io.send_queue.put((data_packet, self.destination))
                 continue
 
