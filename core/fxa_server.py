@@ -18,7 +18,7 @@ def main():
         sys.exit(0)
 
     # check if valid port
-    if int(sys.argv[1]) % 2 != 0 or not(1024 <= int(sys.argv[1]) <= 65535):
+    if int(sys.argv[1]) % 2 != 1 or not(1024 <= int(sys.argv[1]) <= 65535):
         print "Invalid port. The port number must be odd and between 1024 and 65535."
         sys.exit(0)
 
