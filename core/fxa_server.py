@@ -1,7 +1,9 @@
 import sys
 import os.path
+import os
 
 from rxp_socket import RxPSocket
+from rxp_packet import ParseException
 
 __author__ = 'hunt'
 
@@ -41,7 +43,8 @@ def main():
         if message == '':
             pass
 
-        if not os.path.isfile(message):
+        if not os.path.isfile(str(os.getcwd() + "/" + message)):
+            print "Tried to get file from: ", str(os.getcwd() + "/" + message)
             print "Sorry, the file requested does not exist!"
             pass
 
@@ -52,7 +55,7 @@ def main():
             socket.send(contents)
             f.close()
 
-        except:
+        except ParseException:
             print "No file to stream."
             # TODO what to send? socket.send("")
             pass
