@@ -317,7 +317,8 @@ class RxPSocket:
            # print packets[key].payload
         # print "Packet.keys length: " + str(len(packets.keys()))
 
-        return ''.join(map(lambda packet: packet.payload, map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
+        response = ''.join(map(lambda packet: packet.payload, map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
+        return response
 
     def close(self):
         fin_ack_received = False

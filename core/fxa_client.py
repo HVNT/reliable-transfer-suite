@@ -5,15 +5,19 @@ from rxp_socket import RxPSocket
 __author__ = 'hunt'
 
 
+def __dequote(target):
+    return target.strip('"')
+
+
 def main():
     if len(sys.argv) != 4:
         print "Invalid arguments."
         print "Command-line: FxA-client X A P."
-        print "X: the port that the FxA-client's UDP socket port should bind to." \
-              "Please remember that this port number should be equal to the server's" \
+        print "X: The port that the FxA-client's UDP socket port should bind to. " \
+              "Please remember that this port number should be equal to the server's " \
               "port number minus 1."
-        print "A: the IP address of NetEmu."
-        print "P: the UDP port number of NetEmu."
+        print "A: The IP address of NetEmu."
+        print "P: The UDP port number of NetEmu."
         sys.exit(0)
 
     # TODO check if port number appropriate for a client..
@@ -36,6 +40,7 @@ def main():
     while True:
         command = raw_input("Enter a command (get F, post F, disconnect): ")
         command = command.split()
+        target = __dequote(command[1])
 
         if len(command) > 2:
             print "Invalid number of parameters. Please check your command."
@@ -49,22 +54,22 @@ def main():
                 print "Invalid number of parameters. Please check your command."
 
         elif command[0] == "get":
-            socket.send(command[1])
+            socket.send(target)
 
-            print "Sending request to get the file: " + command[1]
+            print "Sending request to get the file: " + target
             read_val = socket.recv()
 
             print "Received file contents."
-            f = open(command[1] + "__copy", 'w')
+            f = open(target + "__copy", 'w')
             f.write(read_val)
 
-            print "Saved file as: " + command[1] + "__copy."
+            print "Saved file as: " + target + "__copy."
             f.close()
 
         elif command[0] == "post":
-            socket.send(command[1])
+            socket.send(target)
 
-            print "Sending file send request: " + command[1]
+            print "Sending file send request: " + target
 
             # TODO..
 
