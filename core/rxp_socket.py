@@ -230,7 +230,7 @@ class RxPSocket:
                             return
 
                     data_packet.frequency += 1
-                    # TODO recalc checksum now that frequency increased
+                    data_packet.update_checksum()
                     self.io.send_queue.put((data_packet, self.destination))
                 continue
 
@@ -248,6 +248,7 @@ class RxPSocket:
                 time_remaining = 0
 
             # if first packet in pipeline is acknowledged, slide the window
+            # TODO handle case when packet in 1...N is ACK'd, means client has recvd all other packets before hand
             elif self.__verify_ack(ack_packet, address, window.window[0].seq_number):
                 self.retransmit_timer.update(ack_packet.frequency, time.time() - time_sent)
                 self.logger.debug('Updated retransmit timer; timeout is now ' + str(self.retransmit_timer.timeout))
@@ -267,6 +268,8 @@ class RxPSocket:
                     time_remaining = .5
                 self.logger.debug('Trash packet receive; time remaining before timeout: ' + str(time_remaining))
 
+    # TODO needs to check recv queue to see min seq# recvd (or just have knowledge of current min seq# recvd)
+    # TODO concatenate packets in order until ready to be sent up to application layer
     # TODO communicate window size available.. keep track of window size available..
     def recv(self):
         kill_received = False
