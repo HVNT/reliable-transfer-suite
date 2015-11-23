@@ -117,7 +117,6 @@ class RxPSocket:
     """
     For client to attempt to connect to a server.
     """
-
     def connect(self, dst_adr):
         self.destination = dst_adr
         syn_ack_received = False
@@ -164,6 +163,7 @@ class RxPSocket:
             ack=True
         )
         self.io.send_queue.put((ack_packet, self.destination))
+
         self.seq_number += 1
 
         self.cxn_status = RxPConnectionStatus.IDLE
