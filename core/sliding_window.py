@@ -4,23 +4,31 @@ __author__ = 'hunt'
 class SlidingWindow:
     def __init__(self, packets, window_size):
         self.packets = packets
+        self.acknowledged_packets = {}
         self.window_size = window_size
         self.window_idx = 0
         self.__calculate_window()  # sets self.window[]
 
-    def slide_past(self, packet):
-        packet_idx = self.index_of_packet(packet)
-        if packet_idx >= 0:
-            self.window_idx += packet_idx + 1
+    def slide(self):
+        if len(self.window) > 0:
+            slide_distance = 1  # by default, since we know when this is called index 0 has been ACK'd
+            for packet in self.window:
+                # continue until reach a packet that has not yet been ACK'd
+                if self.acknowledged_packets.get(packet.seq_number):
+                    slide_distance += 1
+                    self.acknowledged_packets.pop(packet.seq_number)  # remove as we go..
+                else:
+                    break
+
+            self.window_idx += slide_distance
+            already_sent = len(self.window) - slide_distance
             self.__calculate_window()
-        else:
-            print "shit fucked in SLIDE_PAST"
+            not_sent = len(self.window) - already_sent
+            return not_sent
+        return 0
 
     def is_empty(self):
         return len(self.window) == 0
-
-    def is_emptying(self):
-        return len(self.window) < self.window_size
 
     def index_of_packet(self, target_packet):
         target_seq_number = target_packet.ack_number - 1
@@ -30,6 +38,9 @@ class SlidingWindow:
                 if target_seq_number == packet.seq_number:
                     return i
         return -1
+
+    def acknowledge_packet(self, packet):
+        self.acknowledged_packets[packet.seq_number] = packet
 
     # set self.window
     def __calculate_window(self):

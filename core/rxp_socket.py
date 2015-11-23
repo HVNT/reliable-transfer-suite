@@ -249,14 +249,18 @@ class RxPSocket:
 
             # if a packet in window is acknowledged, slide the window past said received packet
             elif self.__verify_is_ack(ack_packet, address) and window.index_of_packet(ack_packet) >= 0:
-                window.slide_past(ack_packet)
                 self.retransmit_timer.update(ack_packet.frequency, time.time() - time_sent)
                 self.logger.debug('Updated retransmit timer; timeout is now ' + str(self.retransmit_timer.timeout))
+                window.acknowledge_packet(ack_packet)
 
-                if not window.is_emptying():
-                    self.io.send_queue.put((window.window[-1], self.destination))
-                    self.seq_number += 1
-                    # print "executing"
+                if self.__verify_ack(ack_packet, address, window.window[0]):
+                    additions = window.slide()
+                    # send newly added packets if they were added
+                    if additions > 0:
+                        while additions > 0:
+                            self.io.send_queue.put((window.window[-additions], self.destination))
+                            self.seq_number += 1
+                            additions -= 1
 
             # otherwise, update time remaining
             else:
@@ -337,10 +341,13 @@ class RxPSocket:
 
                     # for key in packets.keys():
                     # print packets[key].payload
-        # print "Packet.keys length: " + str(len(packets.keys()))
+                    # print "Packet.keys length: " + str(len(packets.keys()))
 
-        response = ''.join(map(lambda packet: packet.payload,
-                               map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
+        response = ''.join(
+            map(
+                lambda packet: packet.payload,
+                map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))
+            ))
         return response
 
     def close(self):
