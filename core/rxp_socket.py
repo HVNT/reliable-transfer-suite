@@ -119,10 +119,10 @@ class RxPSocket:
     """
     For client to attempt to connect to a server.
     """
+
     def connect(self, dst_adr):
         self.destination = dst_adr
         syn_ack_received = False
-
         self.io.start()
 
         # send SYN
@@ -133,7 +133,6 @@ class RxPSocket:
             seq_number=self.seq_number,
             syn=True
         )
-
         self.io.send_queue.put((syn_packet, self.destination))
         self.seq_number += 1
 
@@ -165,9 +164,7 @@ class RxPSocket:
             ack=True
         )
         self.io.send_queue.put((ack_packet, self.destination))
-
         self.seq_number += 1
-
         self.cxn_status = RxPConnectionStatus.IDLE
 
     """
@@ -197,15 +194,15 @@ class RxPSocket:
             self.seq_number += 1
             floor += payload_size
 
+        kills_sent = 0  # allow to be sent 3 times before dropping client cxn
+        kill_seq_number = self.seq_number
         kill_packet = RxPPacket(
             self.port_number,
             self.destination[1],
-            seq_number=self.seq_number
+            seq_number=kill_seq_number
         )
         packets.append(kill_packet)  # put that shit at the end after we've added all the other packets
         self.seq_number += 1
-        self.kill_seq_number = self.seq_number
-        self.kill_sent_number = 0  # TODO need?
 
         self.logger.debug('Placing packets in window to be sent now...')
         window = SlidingWindow(packets, self.window_size)
@@ -218,6 +215,7 @@ class RxPSocket:
         while not window.is_empty():
             try:
                 ack_packet, address = self.io.recv_queue.get(True, time_remaining)
+
             except Queue.Empty:
                 # timeout, currently GO-BACK-N TODO refactor to SR
                 self.logger.debug('Timed out waiting for ack during data transmission; retransmitting window.')
@@ -225,9 +223,9 @@ class RxPSocket:
                 time_remaining = self.retransmit_timer.timeout
 
                 for data_packet in window.window:
-                    if self.kill_seq_number == data_packet.seq_number:
-                        self.kill_sent_number += 1
-                        if self.kill_sent_number > 3:  # if retransmitted the
+                    if kill_seq_number == data_packet.seq_number:
+                        kills_sent += 1
+                        if kills_sent > 3:  # if retransmitted 3 times already, kill cxn with client
                             self.logger.debug('Unable to end connection; killing now.')
                             return
 
@@ -247,18 +245,17 @@ class RxPSocket:
                     ack=True
                 )
                 self.io.send_queue.put((ack_packet, self.destination))
-                time_remaining = 0
+                time_remaining = 0  # ??
 
             # if first packet in pipeline is acknowledged, slide the window
             # TODO handle case when packet in 1...N is ACK'd, means client has recvd all other packets before hand
-            elif self.__verify_ack(ack_packet, address, window.window[0].seq_number):
+            elif self.__verify_is_ack(ack_packet, address) and window.has_packet(ack_packet):
                 self.retransmit_timer.update(ack_packet.frequency, time.time() - time_sent)
                 self.logger.debug('Updated retransmit timer; timeout is now ' + str(self.retransmit_timer.timeout))
 
                 window.slide()
 
-                # TODO confusing
-                if not window.has_room():
+                if not window.has_packets():
                     self.io.send_queue.put((window.window[-1], self.destination))
                     self.seq_number += 1
                     # print "executing"
@@ -268,7 +265,7 @@ class RxPSocket:
                 time_remaining -= time.time() - time_sent / 4  # decay
                 if time_remaining < time.time():
                     time_remaining = .5
-                self.logger.debug('Trash packet receive; time remaining before timeout: ' + str(time_remaining))
+                self.logger.debug('Trash packet receive; time remaining before next timeout: ' + str(time_remaining))
 
     # TODO needs to check recv queue to see min seq# recvd (or just have knowledge of current min seq# recvd)
     # TODO concatenate packets in order until ready to be sent up to application layer
@@ -280,7 +277,7 @@ class RxPSocket:
         frequencies = {}
 
         # until connection is closed, read data
-        while not read_kill: #or self.cxn_status != "no_conn":
+        while not read_kill:  # or self.cxn_status != "no_conn":
             try:
                 data_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
@@ -296,7 +293,7 @@ class RxPSocket:
 
                 packets[data_packet.seq_number] = data_packet
 
-                #if we got a fin, send fin ack back
+                # if we got a fin, send fin ack back
                 if data_packet.fin:
                     self.logger.debug('Sending fin ack during data transfer')
                     fin_ack_packet = RxPPacket(
@@ -312,11 +309,11 @@ class RxPSocket:
                     self.seq_number += 1
                     self.cxn_status = RxPConnectionStatus.CLSG
 
-                #if we get an ack while closing, we've gracefully closed
+                # if we get an ack while closing, we've gracefully closed
                 elif data_packet.ack and self.cxn_status == "closing":
                     self.logger.debug('Received Final Ack. Closed')
                     self.cxn_status = RxPConnectionStatus.NONE
-                    #TODO this seems really hacky???
+                    # TODO this seems really hacky???
                     return "CONNECTION CLOSED"
 
                 else:
@@ -340,11 +337,12 @@ class RxPSocket:
                     sorted_pkeys = sorted(packets.keys())
                     read_kill = sorted_pkeys == range(sorted_pkeys[0], sorted_pkeys[0] + len(sorted_pkeys))
 
-        # for key in packets.keys():
-           # print packets[key].payload
+                    # for key in packets.keys():
+                    # print packets[key].payload
         # print "Packet.keys length: " + str(len(packets.keys()))
 
-        response = ''.join(map(lambda packet: packet.payload, map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
+        response = ''.join(map(lambda packet: packet.payload,
+                               map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))))
         return response
 
     def close(self):
@@ -398,3 +396,6 @@ class RxPSocket:
 
     def __verify_fin(self, packet, address, sequence_number):
         return address == self.destination and packet.fin
+
+    def __verify_is_ack(self, packet, address):
+        return address == self.destination and packet.ack
