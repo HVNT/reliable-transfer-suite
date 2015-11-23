@@ -1,5 +1,6 @@
 import math
 import hashlib
+import zlib
 
 __author__ = 'hunt'
 
@@ -56,6 +57,7 @@ class RxPPacket:
         calculated_checksum = self.calculate_checksum(zeroed_packet)
 
         if raw_checksum != calculated_checksum:
+            print "Checksums don't match"
             raise ParseException
 
         raw_packet = map(ord, data)

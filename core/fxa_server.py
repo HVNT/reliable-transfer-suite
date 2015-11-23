@@ -18,6 +18,11 @@ def main():
         print "P: the UDP port number of NetEmu"
         sys.exit(0)
 
+    # check if valid port
+    if int(sys.argv[1]) % 2 != 1 or not (1024 <= int(sys.argv[1]) <= 65535):
+        print "Invalid port. The port number must be odd and between 1024 and 65535."
+        sys.exit(0)
+
     server_udp_port = sys.argv[1]
     net_emu_ip = sys.argv[2]
     net_emu_udp_port = sys.argv[3]
@@ -38,29 +43,38 @@ def main():
 
     while True:
         message = socket.recv()
-        print "Accepted file request: " + message
 
-        if message == '':
+        print "connection status is: ", socket.cxn_status
+        if socket.cxn_status == "no_conn":
+
+            # TODO correct to go back into accept???
+            socket.accept()
             pass
 
-        if not os.path.isfile(str(os.getcwd() + "/" + message)):
-            print "Tried to get file from: ", str(os.getcwd() + "/" + message)
-            print "Sorry, the file requested does not exist!"
-            pass
+        else:
+            print "Accepted file request: " + message
 
-        try:
-            f = open(message, 'r')
-            contents = f.read()
-            print "Streaming contents of file requested."
-            socket.send(contents)
-            f.close()
+            if message == '':
+                pass
 
-        except ParseException:
-            print "No file to stream."
-            # TODO what to send? socket.send("")
-            pass
+            if not os.path.isfile(str(os.getcwd() + "/" + message)):
+                print "Tried to get file from: ", str(os.getcwd() + "/" + message)
+                print "Sorry, the file requested does not exist!"
+                pass
 
-        raw_input("Press enter to accept more connections.")  # ??
+            try:
+                f = open(message, 'r')
+                contents = f.read()
+                print "Streaming contents of file requested."
+                socket.send(contents)
+                f.close()
+
+            except:  # TODO should be "excepting" things that are passed up from socket?
+                print "No file to stream. Letting client know."
+                socket.send("ERR:FILE_NOT_FOUND")
+                pass
+
+                # raw_input("Press enter to accept more connections.")  # ??
 
 
 if __name__ == '__main__':

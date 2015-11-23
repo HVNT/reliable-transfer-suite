@@ -20,14 +20,16 @@ def main():
         print "P: The UDP port number of NetEmu."
         sys.exit(0)
 
-    # TODO check if port number appropriate for a client..
+    # check if valid port
+    if int(sys.argv[1]) % 2 != 0 or not (1024 <= int(sys.argv[1]) <= 65535):
+        print "Invalid port. The port number must be even and between 1024 and 65535."
+        sys.exit(0)
 
     # get params
     client_udp_port = sys.argv[1]
     net_emu_ip = sys.argv[2]
     net_emu_udp_port = sys.argv[3]
 
-    # TODO should we be asking for the window size here?
     window = int(raw_input("Enter a window size W: "))
 
     # set up client socket
@@ -42,7 +44,7 @@ def main():
         command = command.split()
         target = __dequote(command[1])
 
-        if len(command) > 2:
+        if len(command) > 2 or len(command) == 0:
             print "Invalid number of parameters. Please check your command."
 
         elif command[0] == "disconnect":
@@ -59,20 +61,24 @@ def main():
             print "Sending request to get the file: " + target
             read_val = socket.recv()
 
-            print "Received file contents."
-            f = open(target + "__copy", 'w')
-            f.write(read_val)
+            # TODO this seems hacky?
+            if read_val == "ERR:FILE_NOT_FOUND":
+                print target + " not found."
+            else:
+                print "Received file contents."
+                f = open(target + "__copy", 'w')  # TODO save as {{filename}}__copy{{(n)}}.{{file-ext}}
+                f.write(read_val)
 
-            print "Saved file as: " + target + "__copy."
-            f.close()
+                print "Saved file as: " + target + "__copy."
+                f.close()
 
+        # TODO logic to post
         elif command[0] == "post":
             socket.send(target)
 
             print "Sending file send request: " + target
 
-            # TODO..
-
+        # TODO logic to put
         else:
             print "Invalid command."
 
