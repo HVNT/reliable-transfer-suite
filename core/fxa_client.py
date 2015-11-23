@@ -16,7 +16,7 @@ def main():
         print "P: the UDP port number of NetEmu."
         sys.exit(0)
 
-    print int(sys.argv[1])
+    # check if valid port
     if int(sys.argv[1]) % 2 != 0 or not(1024 <= int(sys.argv[1]) <= 65535):
         print "Invalid port. The port number must be even and between 1024 and 65535."
         sys.exit(0)

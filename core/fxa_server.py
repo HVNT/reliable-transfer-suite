@@ -42,29 +42,37 @@ def main():
 
     while True:
         message = socket.recv()
-        print "Accepted file request: " + message
 
-        if message == '':
+        print "connection status is: ", socket.cxn_status
+        if socket.cxn_status == "no_conn":
+            #TODO correct to go back into accept???
+            socket.accept()
             pass
 
-        if not os.path.isfile(str(os.getcwd() + "/" + message)):
-            print "Tried to get file from: ", str(os.getcwd() + "/" + message)
-            print "Sorry, the file requested does not exist!"
-            pass
+        else:
+            print "Accepted file request: " + message
 
-        try:
-            f = open(message, 'r')
-            contents = f.read()
-            print "Streaming contents of file requested."
-            socket.send(contents)
-            f.close()
+            if message == '':
+                pass
 
-        except:
-            print "No file to stream. Letting client know."
-            socket.send("ERR:FILE_NOT_FOUND")
-            pass
+            if not os.path.isfile(str(os.getcwd() + "/" + message)):
+                print "Tried to get file from: ", str(os.getcwd() + "/" + message)
+                print "Sorry, the file requested does not exist!"
+                pass
 
-        raw_input("Press enter to accept more connections.")  # ??
+            try:
+                f = open(message, 'r')
+                contents = f.read()
+                print "Streaming contents of file requested."
+                socket.send(contents)
+                f.close()
+
+            except:
+                print "No file to stream. Letting client know."
+                socket.send("ERR:FILE_NOT_FOUND")
+                pass
+
+            #raw_input("Press enter to accept more connections.")  # ??
 
 
 if __name__ == '__main__':
