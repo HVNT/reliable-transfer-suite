@@ -8,25 +8,28 @@ class SlidingWindow:
         self.window_idx = 0
         self.__calculate_window()  # sets self.window[]
 
-    # TODO can slide more than 1..
-    def slide(self):
-        self.window_idx += 1
-        self.__calculate_window()
+    def slide_past(self, packet):
+        packet_idx = self.index_of_packet(packet)
+        if packet_idx >= 0:
+            self.window_idx += packet_idx + 1
+            self.__calculate_window()
+        else:
+            print "shit fucked in SLIDE_PAST"
 
     def is_empty(self):
         return len(self.window) == 0
 
-    def has_packets(self):
+    def is_emptying(self):
         return len(self.window) < self.window_size
 
-    def has_packet(self, target_packet):
+    def index_of_packet(self, target_packet):
         target_seq_number = target_packet.ack_number - 1
 
         if target_seq_number and len(self.window) > 0:
-            for packet in self.window:
+            for i, packet in enumerate(self.window):
                 if target_seq_number == packet.seq_number:
-                    return True
-        return False
+                    return i
+        return -1
 
     # set self.window
     def __calculate_window(self):

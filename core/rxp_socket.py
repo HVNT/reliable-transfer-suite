@@ -216,8 +216,8 @@ class RxPSocket:
             try:
                 ack_packet, address = self.io.recv_queue.get(True, time_remaining)
 
+            # resend entire send window (all packets that weren't yet ACK'd by the receiver)
             except Queue.Empty:
-                # timeout, currently GO-BACK-N TODO refactor to SR
                 self.logger.debug('Timed out waiting for ack during data transmission; retransmitting window.')
                 time_sent = time.time()
                 time_remaining = self.retransmit_timer.timeout
@@ -245,17 +245,15 @@ class RxPSocket:
                     ack=True
                 )
                 self.io.send_queue.put((ack_packet, self.destination))
-                time_remaining = 0  # ??
+                time_remaining = 0  # TODO will cause all packets to be resent.. do we want this? shouldnt we drop?
 
-            # if first packet in pipeline is acknowledged, slide the window
-            # TODO handle case when packet in 1...N is ACK'd, means client has recvd all other packets before hand
-            elif self.__verify_is_ack(ack_packet, address) and window.has_packet(ack_packet):
+            # if a packet in window is acknowledged, slide the window past said received packet
+            elif self.__verify_is_ack(ack_packet, address) and window.index_of_packet(ack_packet) >= 0:
+                window.slide_past(ack_packet)
                 self.retransmit_timer.update(ack_packet.frequency, time.time() - time_sent)
                 self.logger.debug('Updated retransmit timer; timeout is now ' + str(self.retransmit_timer.timeout))
 
-                window.slide()
-
-                if not window.has_packets():
+                if not window.is_emptying():
                     self.io.send_queue.put((window.window[-1], self.destination))
                     self.seq_number += 1
                     # print "executing"
