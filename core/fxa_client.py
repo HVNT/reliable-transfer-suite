@@ -74,7 +74,7 @@ def main():
                 while os.path.isfile(filename):
                     i += 1
                     filename = "%s__copy(%d).%s" % (target[0], i, target[1])
-                f = open(filename, 'w')  # TODO save as {{filename}}__copy{{(n)}}.{{file-ext}}
+                f = open(filename, 'w')
                 f.write(read_val)
 
                 print "Saved file as: " + filename
