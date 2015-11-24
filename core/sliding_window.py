@@ -11,20 +11,25 @@ class SlidingWindow:
 
     def slide(self):
         if len(self.window) > 0:
-            slide_distance = 1  # by default, since we know when this is called index 0 has been ACK'd
+            slide_distance = 0  # by default, since we know when this is called index 0 has been ACK'd
             for packet in self.window:
                 # continue until reach a packet that has not yet been ACK'd
+                print "CURR PACKT"
+                packet.print_packet()
+                # print self.acknowledged_packets
                 if self.acknowledged_packets.get(packet.seq_number):
-                    slide_distance += 1
                     self.acknowledged_packets.pop(packet.seq_number)  # remove as we go..
+                    slide_distance += 1
                 else:
                     break
 
-            self.window_idx += slide_distance
+            print "SLIDE DISTANCE: " + str(slide_distance)
             already_sent = len(self.window) - slide_distance
+
+            self.window_idx += slide_distance
             self.__calculate_window()
-            not_sent = len(self.window) - already_sent
-            return not_sent
+
+            return len(self.window) - already_sent  # number not set
         return 0
 
     def is_empty(self):
@@ -36,11 +41,13 @@ class SlidingWindow:
         if target_seq_number and len(self.window) > 0:
             for i, packet in enumerate(self.window):
                 if target_seq_number == packet.seq_number:
+                    print str(i)
                     return i
         return -1
 
     def acknowledge_packet(self, packet):
-        self.acknowledged_packets[packet.seq_number] = packet
+        self.acknowledged_packets[packet.ack_number - 1] = 1
+        print self.acknowledged_packets
 
     # set self.window
     def __calculate_window(self):
@@ -48,3 +55,5 @@ class SlidingWindow:
             self.window = self.packets[self.window_idx: (self.window_idx + self.window_size)]
         else:
             self.window = self.packets[self.window_idx: len(self.packets)]
+
+        print "\nUPDATED WINDOW; " + str(len(self.window)) + " PACKETS IN WINDOW"

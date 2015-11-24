@@ -194,13 +194,13 @@ class RxPSocket:
             self.seq_number += 1
             floor += payload_size
 
-        kills_sent = 0  # allow to be sent 3 times before dropping client cxn
-        kill_seq_number = self.seq_number
         kill_packet = RxPPacket(
             self.port_number,
             self.destination[1],
-            seq_number=kill_seq_number
+            seq_number=self.seq_number
         )
+        kills_sent = 0  # allow to be sent 3 times before dropping client cxn
+        kill_seq_number = kill_packet.seq_number
         packets.append(kill_packet)  # put that shit at the end after we've added all the other packets
         self.seq_number += 1
 
@@ -253,11 +253,13 @@ class RxPSocket:
                 self.logger.debug('Updated retransmit timer; timeout is now ' + str(self.retransmit_timer.timeout))
                 window.acknowledge_packet(ack_packet)
 
-                if self.__verify_ack(ack_packet, address, window.window[0]):
+                if self.__verify_ack(ack_packet, address, window.window[0].seq_number):
                     additions = window.slide()
                     # send newly added packets if they were added
+                    print "ADDITIONS " + str(additions)
                     if additions > 0:
                         while additions > 0:
+                            print "ADDITIONS LEFT: " + additions
                             self.io.send_queue.put((window.window[-additions], self.destination))
                             self.seq_number += 1
                             additions -= 1
@@ -390,6 +392,9 @@ class RxPSocket:
     def __verify_syn(self, packet, address):
         return address == self.destination and packet.syn
 
+    def __verify_is_ack(self, packet, address):
+        return address == self.destination and packet.ack
+
     def __verify_ack(self, packet, address, sequence_number):
         return address == self.destination and packet.ack and packet.ack_number - 1 == sequence_number
 
@@ -401,6 +406,3 @@ class RxPSocket:
 
     def __verify_fin(self, packet, address, sequence_number):
         return address == self.destination and packet.fin
-
-    def __verify_is_ack(self, packet, address):
-        return address == self.destination and packet.ack

@@ -39,7 +39,7 @@ def main():
     socket.accept()
     destination = socket.destination  # ??
 
-    print "Server set up and accepting client sockets."
+    print "Client session initialized; accepting client requests."
 
     while True:
         message = socket.recv()

@@ -114,18 +114,17 @@ class RxPPacket:
                and self.payload == ''
 
     def print_packet(self):
-        print "\n"
-        print "src port: " + str(self.src_port)
-        print "dst port: " + str(self.dst_port)
-        print "seq #: " + str(self.seq_number)
-        print "ack #: " + str(self.ack_number)
-        print "frequency : " + str(self.frequency)
-        print "is ack: " + str(self.ack)
-        print "is syn: " + str(self.syn)
-        print "is fin: " + str(self.fin)
-        print "data offset: " + str(self.data_offset)
-        print "window size: " + str(self.window_size)
-        print "checksum: " + str(self.checksum)
-        print "payload: pp " + str(self.payload) + " pp"
+        print "src port: " + str(self.src_port) + \
+              " | dst port: " + str(self.dst_port)
+        print "seq #: " + str(self.seq_number) + \
+              " | ack #: " + str(self.ack_number)
+        print "is ack: " + str(self.ack) + \
+              " | is syn: " + str(self.syn) + \
+              " | is fin: " + str(self.fin)
+        print "frequency : " + str(self.frequency) + \
+              " | data offset: " + str(self.data_offset)
+        print "checksum: " + str(self.checksum) + \
+              " | window size: " + str(self.window_size)
+        # print "payload: " + str(self.payload)
 
 
