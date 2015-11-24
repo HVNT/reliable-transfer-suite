@@ -1,4 +1,5 @@
 import sys
+import os
 
 from rxp_socket import RxPSocket
 
@@ -66,10 +67,17 @@ def main():
                 print target + " not found."
             else:
                 print "Received file contents."
-                f = open(target + "__copy", 'w')  # TODO save as {{filename}}__copy{{(n)}}.{{file-ext}}
+                target = target.split('.')
+
+                filename = target[0] + "__copy." + target[1]
+                i = 0
+                while os.path.isfile(filename):
+                    i += 1
+                    filename = "%s__copy(%d).%s" % (target[0], i, target[1])
+                f = open(filename, 'w')  # TODO save as {{filename}}__copy{{(n)}}.{{file-ext}}
                 f.write(read_val)
 
-                print "Saved file as: " + target + "__copy."
+                print "Saved file as: " + filename
                 f.close()
 
         # TODO logic to post
