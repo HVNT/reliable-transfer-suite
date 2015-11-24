@@ -258,8 +258,9 @@ class RxPSocket:
                     # send newly added packets if they were added
                     print "ADDITIONS " + str(additions)
                     if additions > 0:
+                        print "ADDITIONS IS > 0"
                         while additions > 0:
-                            print "ADDITIONS LEFT: " + additions
+                            print "ADDITIONS LEFT: " + str(additions)
                             self.io.send_queue.put((window.window[-additions], self.destination))
                             self.seq_number += 1
                             additions -= 1
