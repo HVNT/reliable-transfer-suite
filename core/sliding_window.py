@@ -14,18 +14,13 @@ class SlidingWindow:
             slide_distance = 0  # by default, since we know when this is called index 0 has been ACK'd
             for packet in self.window:
                 # continue until reach a packet that has not yet been ACK'd
-                print "CURR PACKT"
-                packet.print_packet()
-                # print self.acknowledged_packets
                 if self.acknowledged_packets.get(packet.seq_number):
                     self.acknowledged_packets.pop(packet.seq_number)  # remove as we go..
                     slide_distance += 1
                 else:
                     break
 
-            print "SLIDE DISTANCE: " + str(slide_distance)
             already_sent = len(self.window) - slide_distance
-
             self.window_idx += slide_distance
             self.__calculate_window()
 
@@ -55,5 +50,3 @@ class SlidingWindow:
             self.window = self.packets[self.window_idx: (self.window_idx + self.window_size)]
         else:
             self.window = self.packets[self.window_idx: len(self.packets)]
-
-        print "\nUPDATED WINDOW; " + str(len(self.window)) + " PACKETS IN WINDOW"

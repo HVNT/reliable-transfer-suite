@@ -256,11 +256,8 @@ class RxPSocket:
                 if self.__verify_ack(ack_packet, address, window.window[0].seq_number):
                     additions = window.slide()
                     # send newly added packets if they were added
-                    print "ADDITIONS " + str(additions)
                     if additions > 0:
-                        print "ADDITIONS IS > 0"
                         while additions > 0:
-                            print "ADDITIONS LEFT: " + str(additions)
                             self.io.send_queue.put((window.window[-additions], self.destination))
                             self.seq_number += 1
                             additions -= 1
@@ -289,7 +286,6 @@ class RxPSocket:
                 continue
 
             if address == self.destination:
-                # TODO just get frequency of data_packet ??
                 if frequencies.get(data_packet.seq_number):
                     frequencies[data_packet.seq_number] += 1
                 else:
