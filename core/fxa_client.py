@@ -43,7 +43,9 @@ def main():
     while True:
         command = raw_input("Enter a command (get F, post F, disconnect): ")
         command = command.split()
-        target = __dequote(command[1])
+
+        if len(command) > 1:
+            target = __dequote(command[1])
 
         if len(command) > 2 or len(command) == 0:
             print "Invalid number of parameters. Please check your command."
