@@ -135,35 +135,42 @@ class RxPSocket:
         )
         self.io.send_queue.put((syn_packet, self.destination))
         self.seq_number += 1
+        ack_sent = False
+        ack_confirmed = False
+        syn_ack_timeout = 1
 
         # wait for SYN/ACK
-        while not syn_ack_received:
+        while not (syn_ack_received and ack_confirmed):
+            syn_ack_packet = None
             try:
-                syn_ack_packet, address = self.io.recv_queue.get(True, 1)
+                syn_ack_packet, address = self.io.recv_queue.get(True, syn_ack_timeout)
             except Queue.Empty:
+                if syn_ack_packet == None and ack_sent:
+                    ack_confirmed = True
+                    break
+
                 self.logger.debug('Timed out waiting on SYN/ACK during handshake; retransmitting SYN.')
                 syn_packet.frequency += 1
                 syn_packet.update_checksum()
-                # TODO retransmit timer, time out
                 self.io.send_queue.put((syn_packet, self.destination))
                 continue
 
             if syn_ack_packet and address:
                 syn_ack_received = self.__verify_syn_ack(syn_ack_packet, address, syn_packet.seq_number)
-                if syn_ack_received:
-                    self.logger.debug('Received SYN/ACK during handshake.')
 
-        # TODO resending ACK if another SYN/ACK is received? AKA server never gets the clients ACK
-        # send ACK
-        self.logger.debug('Sending ACK to finish handshake.')
-        ack_packet = RxPPacket(
-            self.port_number,
-            self.destination[1],
-            seq_number=self.seq_number,
-            ack_number=syn_ack_packet.seq_number + 1,
-            ack=True
-        )
-        self.io.send_queue.put((ack_packet, self.destination))
+                if syn_ack_received:
+                    self.logger.debug('Received SYN/ACK during handshake; sending ACK to finish handshake.')
+                    ack_sent = True
+                    syn_ack_timeout = 5
+                    ack_packet = RxPPacket(
+                        self.port_number,
+                        self.destination[1],
+                        seq_number=self.seq_number,
+                        ack_number=syn_ack_packet.seq_number + 1,
+                        ack=True
+                    )
+                    self.io.send_queue.put((ack_packet, self.destination))
+
         self.seq_number += 1
         self.cxn_status = RxPConnectionStatus.IDLE
 
