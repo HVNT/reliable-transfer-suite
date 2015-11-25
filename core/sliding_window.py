@@ -36,13 +36,11 @@ class SlidingWindow:
         if target_seq_number and len(self.window) > 0:
             for i, packet in enumerate(self.window):
                 if target_seq_number == packet.seq_number:
-                    print str(i)
                     return i
         return -1
 
     def acknowledge_packet(self, packet):
         self.acknowledged_packets[packet.ack_number - 1] = 1
-        print self.acknowledged_packets
 
     # set self.window
     def __calculate_window(self):
