@@ -292,6 +292,7 @@ class RxPSocket:
                 data_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
                 if self.cxn_status == RxPConnectionStatus.CLSG:
+                    print "potential break"
                     break
                 continue
 
@@ -370,14 +371,29 @@ class RxPSocket:
             fin=True
         )
         self.io.send_queue.put((fin_packet, self.destination))
+        fins_sent = 1
         self.seq_number += 1
 
         while not clean_close:
             try:
                 fin_response_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
-                self.logger.debug('Timed out waiting for FIN/ACK during close; closing...')
-                break
+                if fins_sent < 3:
+                    self.logger.debug('Timed out waiting for FIN/ACK during close; sending another FIN.')
+                    print "sending FIN again"
+                    fin_packet = RxPPacket(
+                        self.port_number,
+                        self.destination[1],
+                        seq_number=self.seq_number,
+                        fin=True
+                    )
+                    self.io.send_queue.put((fin_packet, self.destination))
+                    fins_sent += 1
+                    continue
+                else:
+                    self.logger.debug(
+                        'Timed out waiting for FIN/ACK during close. Already attempted to close 3 times, closing now without acknowledgement.')
+                    break
 
             # if FIN received after FIN sent, verify with ACK and close
             if self.__verify_fin(fin_response_packet, address):
@@ -395,12 +411,12 @@ class RxPSocket:
                 self.seq_number += 1
                 time.sleep(5)
 
-            # received ACK for FIN sent, so FIN packet sent corrupted, resend fin packet
+                # received ACK for FIN sent, so FIN packet sent corrupted, resend fin packet
             if self.__verify_ack(fin_response_packet, address, fin_packet.seq_number):
                 self.logger.debug('Received ACK for FIN during close; resending FIN to progress close.')
                 self.io.send_queue.put((fin_packet, self.destination))
 
-            # if FIN/ACK received then progress with closing handshake
+                # if FIN/ACK received then progress with closing handshake
             if self.__verify_fin_ack(fin_response_packet, address, fin_packet.seq_number):
                 clean_close = True
                 self.logger.debug('Received FIN/ACK during close; sending ACK to finish close.')
