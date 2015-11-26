@@ -83,9 +83,15 @@ def main():
 
         # TODO logic to post
         elif command[0] == "post":
-            socket.send(target)
-
-            print "Sending file send request: " + target
+            if os.path.isfile(command[1]):
+                socket.send("post " + target)
+                print "Sending file send request: " + target
+                f = open(command[1], 'r')
+                contents = f.read()
+                socket.send(contents)
+                f.close()
+            else:
+                print "File not found to post!"
 
         # TODO logic to put
         else:
