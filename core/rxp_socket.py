@@ -161,7 +161,7 @@ class RxPSocket:
                 if syn_ack_received:
                     self.logger.debug('Received SYN/ACK during handshake; sending ACK to finish handshake.')
                     ack_sent = True
-                    syn_ack_timeout = 5
+                    syn_ack_timeout = 4
                     ack_packet = RxPPacket(
                         self.port_number,
                         self.destination[1],
@@ -225,7 +225,8 @@ class RxPSocket:
 
             # resend entire send window (all packets that weren't yet ACK'd by the receiver)
             except Queue.Empty:
-                self.logger.debug('Timed out waiting for ack during data transmission; retransmitting window.')
+                self.logger.debug(
+                    'Timed out waiting for ack during data transmission; retransmitting unacknowledged packets.')
                 time_sent = time.time()
                 time_remaining = self.retransmit_timer.timeout
 
@@ -279,9 +280,6 @@ class RxPSocket:
                     time_remaining = .5
                 self.logger.debug('Trash packet receive; time remaining before next timeout: ' + str(time_remaining))
 
-    # TODO needs to check recv queue to see min seq# recvd (or just have knowledge of current min seq# recvd)
-    # TODO concatenate packets in order until ready to be sent up to application layer
-    # TODO communicate window size available.. keep track of window size available..
     def recv(self):
         kill_received = False
         read_kill = False
@@ -293,6 +291,8 @@ class RxPSocket:
             try:
                 data_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
+                if self.cxn_status == RxPConnectionStatus.CLSG:
+                    break
                 continue
 
             if address == self.destination:
@@ -306,7 +306,7 @@ class RxPSocket:
 
                 # if we got a fin, send fin ack back
                 if data_packet.fin:
-                    self.logger.debug('Sending fin ack during data transfer')
+                    self.logger.debug('Sending FIN/ACK during data transfer.')
                     fin_ack_packet = RxPPacket(
                         self.port_number,
                         self.destination[1],
@@ -321,14 +321,14 @@ class RxPSocket:
                     self.cxn_status = RxPConnectionStatus.CLSG
 
                 # if we get an ack while closing, we've gracefully closed
-                elif data_packet.ack and self.cxn_status == "closing":
-                    self.logger.debug('Received Final Ack. Closed')
+                elif data_packet.ack and self.cxn_status == RxPConnectionStatus.CLSG:
+                    self.logger.debug('Received Final ACK. Closing..')
                     self.cxn_status = RxPConnectionStatus.NONE
                     # TODO this seems really hacky???
                     return "CONNECTION CLOSED"
 
                 else:
-                    self.logger.debug('Sending ack during data transfer.')
+                    self.logger.debug('Sending ACK during data transfer.')
                     ack_packet = RxPPacket(
                         self.port_number,
                         self.destination[1],
@@ -360,7 +360,7 @@ class RxPSocket:
         return response
 
     def close(self):
-        fin_ack_received = False
+        clean_close = False
 
         self.logger.debug('Sending FIN to initiate close.')
         fin_packet = RxPPacket(
@@ -372,24 +372,43 @@ class RxPSocket:
         self.io.send_queue.put((fin_packet, self.destination))
         self.seq_number += 1
 
-        # TODO handle when just fin received.. more than this one case.. what if they both FIN at the same time..
-        while not fin_ack_received:
+        while not clean_close:
             try:
-                fin_ack_packet, address = self.io.recv_queue.get(True, 1)
+                fin_response_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
                 self.logger.debug('Timed out waiting for FIN/ACK during close; closing...')
                 break
 
-            if self.__verify_fin_ack(fin_ack_packet, address, fin_packet.seq_number):
-                fin_ack_received = True
-                print "received fin_ack. here it is:"
-                fin_ack_packet.print_packet()
+            # if FIN received after FIN sent, verify with ACK and close
+            if self.__verify_fin(fin_response_packet, address):
+                clean_close = True
+                self.logger.debug('Received FIN during close; sending ACK to finish close.')
+                ack_packet = RxPPacket(
+                    self.port_number,
+                    self.destination[1],
+
+                    seq_number=self.seq_number,
+                    ack_number=fin_response_packet.seq_number + 1,
+                    ack=True
+                )
+                self.io.send_queue.put((ack_packet, self.destination))
+                self.seq_number += 1
+                time.sleep(5)
+
+            # received ACK for FIN sent, so FIN packet sent corrupted, resend fin packet
+            if self.__verify_ack(fin_response_packet, address, fin_packet.seq_number):
+                self.logger.debug('Received ACK for FIN during close; resending FIN to progress close.')
+                self.io.send_queue.put((fin_packet, self.destination))
+
+            # if FIN/ACK received then progress with closing handshake
+            if self.__verify_fin_ack(fin_response_packet, address, fin_packet.seq_number):
+                clean_close = True
                 self.logger.debug('Received FIN/ACK during close; sending ACK to finish close.')
                 ack_packet = RxPPacket(
                     self.port_number,
                     self.destination[1],
                     seq_number=self.seq_number,
-                    ack_number=fin_ack_packet.seq_number + 1,
+                    ack_number=fin_response_packet.seq_number + 1,
                     ack=True
                 )
                 self.io.send_queue.put((ack_packet, self.destination))
@@ -411,5 +430,5 @@ class RxPSocket:
     def __verify_fin_ack(self, packet, address, sequence_number):
         return address == self.destination and packet.fin and packet.ack and packet.ack_number - 1 == sequence_number
 
-    def __verify_fin(self, packet, address, sequence_number):
-        return address == self.destination and packet.fin
+    def __verify_fin(self, packet, address):
+        return address == self.destination and packet.fin and not packet.ack
