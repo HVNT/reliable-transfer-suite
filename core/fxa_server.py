@@ -62,17 +62,36 @@ def main():
                 print "Sorry, the file requested does not exist!"
                 pass
 
-            try:
-                f = open(message, 'r')
-                contents = f.read()
-                print "Streaming contents of file requested."
-                socket.send(contents)
-                f.close()
+            # TODO what if filename has spaces?
+            message = message.split()
+            if message[0] == "post" and len(message) > 1:
+                read_val = socket.recv()
 
-            except:  # TODO should be "excepting" things that are passed up from socket?
-                print "No file to stream. Letting client know."
-                socket.send("ERR:FILE_NOT_FOUND")
-                pass
+                message = message[1].split('.')
+                filename = message[0] + "__copy." + message[1]
+                i = 0
+                while os.path.isfile(filename):
+                    i += 1
+                    filename = "%s__copy(%d).%s" % (message[0], i, message[1])
+                f = open(filename, 'w')
+                f.write(read_val)
+
+                print "Saved file as: " + filename
+
+                f.close()
+            else:
+                message = message[0]
+                try:
+                    f = open(message, 'r')
+                    contents = f.read()
+                    print "Streaming contents of file requested."
+                    socket.send(contents)
+                    f.close()
+
+                except:  # TODO should be "excepting" things that are passed up from socket?
+                    print "No file to stream. Letting client know."
+                    socket.send("ERR:FILE_NOT_FOUND")
+                    pass
 
                 # raw_input("Press enter to accept more connections.")  # ??
 
