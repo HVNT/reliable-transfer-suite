@@ -32,9 +32,10 @@ def main():
     net_emu_udp_port = sys.argv[3]
 
     window = int(raw_input("Enter a window size W: "))
+    debugger = int(raw_input("Enable debugger? (1 or 0) "))
 
     # set up client socket
-    socket = RxPSocket(window, debugging=True)
+    socket = RxPSocket(window, debugging=debugger)
     socket.bind(("0.0.0.0", int(client_udp_port)))
 
     # connect socket

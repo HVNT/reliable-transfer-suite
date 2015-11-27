@@ -96,7 +96,6 @@ class RxPSocket:
                 self.logger.debug('Timed out waiting on ack during handshake; retransmitting SYN/ACK.')
                 syn_ack_packet.frequency += 1
                 syn_ack_packet.update_checksum()
-                # TODO retransmit timer, time out
                 self.io.send_queue.put((syn_ack_packet, self.destination))
                 continue
 
@@ -205,6 +204,7 @@ class RxPSocket:
         time_sent = time.time()
         time_remaining = self.retransmit_timer.timeout
 
+        self.cxn_status = RxPConnectionStatus.SEND
         for data_packet in window.window:
             self.io.send_queue.put((data_packet, self.destination))
 
@@ -269,12 +269,15 @@ class RxPSocket:
                     time_remaining = .5
                 self.logger.debug('Trash packet receive; time remaining before next timeout: ' + str(time_remaining))
 
+        self.cxn_status = RxPConnectionStatus.IDLE
+
     def recv(self):
         kill_received = False
         read_kill = False
         packets = {}
         frequencies = {}
 
+        self.cxn_status = RxPConnectionStatus.RECV
         # until connection is closed, read data
         while not read_kill:
             try:
@@ -340,6 +343,7 @@ class RxPSocket:
                 lambda packet: packet.payload,
                 map(lambda sequence_number: packets[sequence_number], sorted(packets.keys()))
             ))
+        self.cxn_status = RxPConnectionStatus.IDLE
         return response
 
     def close(self):
@@ -411,6 +415,7 @@ class RxPSocket:
                 self.io.send_queue.put((ack_packet, self.destination))
                 self.seq_number += 1
                 time.sleep(5)
+                self.cxn_status = RxPConnectionStatus.NONE
 
     def __verify_syn(self, packet, address):
         return address == self.destination and packet.syn

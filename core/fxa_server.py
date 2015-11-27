@@ -28,11 +28,12 @@ def main():
     net_emu_udp_port = sys.argv[3]
 
     window = int(raw_input("Enter a window size W: "))
+    debugger = int(raw_input("Enable debugger? (1 or 0) "))
 
     print "Use 'ctrl + c' to terminate."
 
     # set up server socket
-    socket = RxPSocket(window_size=int(window), debugging=True)
+    socket = RxPSocket(window_size=int(window), debugging=debugger)
     socket.bind(("", int(server_udp_port)))
 
     # trigger socket to begin accepting client sockets
