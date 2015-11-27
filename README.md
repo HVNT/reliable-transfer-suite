@@ -39,7 +39,7 @@ Instructions:
 	To run the server program:
 		python fxa_server.py X A P
 		where:
-			X is the port that the FxA-server's UDP socket shoudl bind to
+			X is the port that the FxA-server's UDP socket should bind to
 				(this should be an odd number)
 			A is the IP address of Net Emu
 			P is the UDP port number of NetEmu
