@@ -27,13 +27,9 @@ class RxPConnectionStatus:
 
 class RxPSocket:
     def __init__(self, window_size=10, debugging=False):
-        # TODO verify python version ??
         self.window_size = window_size
         self.io = IOLoop()
-
-        # TODO should we put on the io_loop? so it can just keep track of itself?
         self.cxn_status = RxPConnectionStatus.NONE
-
         self.retransmit_timer = RetransmitTimer()
 
         # for python module logging msgs.. enable if debugger param toggled
@@ -46,9 +42,7 @@ class RxPSocket:
         self.port_number = None
 
         self.seq_number = 0
-        self.ack_number = 0  # ""
-
-        self.resend_limit = 100  # TODO need? appropriate default?
+        self.ack_number = 0
 
     """
     Takes in src address and binds UDP socket to specified port.
@@ -62,7 +56,6 @@ class RxPSocket:
     """
     For server to accept new client socket.
     """
-    # TODO handle SYN flooding
     def accept(self):
         syn_received = False
         ack_received = False
@@ -73,7 +66,6 @@ class RxPSocket:
 
         # wait for a syn that passes verification
         while not syn_received:
-            # TODO self.cxn_status
             try:
                 # NOTE: 1st param blocks, 2nd is timeout (on queue.get)
                 syn_packet, self.destination = self.io.recv_queue.get(True, 1)
@@ -93,11 +85,10 @@ class RxPSocket:
             syn=True
         )
 
-        # TODO self.cxn_status
         self.io.send_queue.put((syn_ack_packet, self.destination))
         self.seq_number += 1
 
-        # wait for ACK from client confirming SYN/ACK received, TODO retransmit on timeout
+        # wait for ACK from client confirming SYN/ACK received
         while not ack_received:
             try:
                 ack_packet, address = self.io.recv_queue.get(True, 1)
@@ -119,7 +110,6 @@ class RxPSocket:
     """
     For client to attempt to connect to a server.
     """
-
     def connect(self, dst_adr):
         self.destination = dst_adr
         syn_ack_received = False
@@ -178,7 +168,6 @@ class RxPSocket:
     For client or server to send a msg. The 'kill_packet' is used
     to inform client and server can know when we done sending.
     """
-    # TODO get window size available from client and respond appropriately
     def send(self, msg):
         floor = 0
         payload_size = 512
@@ -255,7 +244,7 @@ class RxPSocket:
                     ack=True
                 )
                 self.io.send_queue.put((ack_packet, self.destination))
-                time_remaining = 0  # TODO will cause all packets to be resent.. do we want this? shouldnt we drop?
+                time_remaining = 0
 
             # if a packet in window is acknowledged, slide the window past said received packet
             elif self.__verify_is_ack(ack_packet, address) and window.index_of_packet(ack_packet) >= 0:
@@ -287,12 +276,11 @@ class RxPSocket:
         frequencies = {}
 
         # until connection is closed, read data
-        while not read_kill:  # or self.cxn_status != "no_conn":
+        while not read_kill:
             try:
                 data_packet, address = self.io.recv_queue.get(True, 1)
             except Queue.Empty:
                 if self.cxn_status == RxPConnectionStatus.CLSG:
-                    print "potential break"
                     break
                 continue
 
@@ -301,7 +289,6 @@ class RxPSocket:
                     frequencies[data_packet.seq_number] += 1
                 else:
                     frequencies[data_packet.seq_number] = 1
-                # print data_packet.seq_number
 
                 packets[data_packet.seq_number] = data_packet
 
@@ -325,7 +312,6 @@ class RxPSocket:
                 elif data_packet.ack and self.cxn_status == RxPConnectionStatus.CLSG:
                     self.logger.debug('Received Final ACK. Closing..')
                     self.cxn_status = RxPConnectionStatus.NONE
-                    # TODO this seems really hacky???
                     return "CONNECTION CLOSED"
 
                 else:
@@ -348,10 +334,6 @@ class RxPSocket:
                 if kill_received:
                     sorted_pkeys = sorted(packets.keys())
                     read_kill = sorted_pkeys == range(sorted_pkeys[0], sorted_pkeys[0] + len(sorted_pkeys))
-
-                    # for key in packets.keys():
-                    # print packets[key].payload
-                    # print "Packet.keys length: " + str(len(packets.keys()))
 
         response = ''.join(
             map(
@@ -380,7 +362,6 @@ class RxPSocket:
             except Queue.Empty:
                 if fins_sent < 3:
                     self.logger.debug('Timed out waiting for FIN/ACK during close; sending another FIN.')
-                    print "sending FIN again"
                     fin_packet = RxPPacket(
                         self.port_number,
                         self.destination[1],

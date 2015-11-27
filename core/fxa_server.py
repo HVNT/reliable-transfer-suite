@@ -46,11 +46,8 @@ def main():
 
         print "connection status is: ", socket.cxn_status
         if socket.cxn_status == "no_conn":
-
-            # TODO correct to go back into accept???
             socket.accept()
             pass
-
         else:
             if "get" in message:
                 print "Accepted file request: " + message
@@ -63,7 +60,6 @@ def main():
                     print "Sorry, the file requested does not exist!"
                     pass
 
-            # TODO what if filename has spaces?
             try:
                 message = message.split()
                 if message[0] == "post" and len(message) > 1:
@@ -90,7 +86,7 @@ def main():
                         socket.send(contents)
                         f.close()
 
-                    except:  # TODO should be "excepting" things that are passed up from socket?
+                    except:
                         print "No file to stream. Letting client know."
                         socket.send("ERR:FILE_NOT_FOUND")
                         pass

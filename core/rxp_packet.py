@@ -33,7 +33,7 @@ class RxPPacket:
         self.syn = syn
         self.fin = fin
         self.payload = payload or ''
-        self.data_offset = int(math.ceil(1.0 * len(payload) / 4))  # TODO ?? shouldnt this be static?
+        self.data_offset = int(math.ceil(1.0 * len(payload) / 4))
         self.checksum = 0
         self.checksum = self.__class__.calculate_checksum(self.serialize())
 

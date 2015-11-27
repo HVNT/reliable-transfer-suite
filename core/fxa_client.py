@@ -64,7 +64,6 @@ def main():
             print "Sending request to get the file: " + target
             read_val = socket.recv()
 
-            # TODO this seems hacky?
             if read_val == "ERR:FILE_NOT_FOUND":
                 print target + " not found."
             else:
@@ -82,7 +81,6 @@ def main():
                 print "Saved file as: " + filename
                 f.close()
 
-        # TODO logic to post
         elif command[0] == "post":
             if os.path.isfile(command[1]):
                 socket.send("post " + target)
@@ -94,7 +92,6 @@ def main():
             else:
                 print "File not found to post!"
 
-        # TODO logic to put
         else:
             print "Invalid command."
 
