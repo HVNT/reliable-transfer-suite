@@ -23,8 +23,8 @@ class IOLoop(Thread):
         while True:
             try:
                 packet, address = self.send_queue.get(True, 0.1)
-                print '\nSENT: '
-                packet.print_packet()
+                # print '\nSENT: '
+                # packet.print_packet()
                 self.socket.sendto(packet.serialize(), address)
             except Queue.Empty:
                 pass
@@ -32,8 +32,8 @@ class IOLoop(Thread):
             try:
                 packet, address = self.socket.recvfrom(4096)
                 packet = RxPPacket.parse(packet)
-                print '\nRECV: '
-                packet.print_packet()
+                # print '\nRECV: '
+                # packet.print_packet()
                 self.recv_queue.put((packet, address))
             except (socket.timeout, ParseException), e:
                 pass

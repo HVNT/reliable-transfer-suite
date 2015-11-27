@@ -233,12 +233,14 @@ class RxPSocket:
                     if kill_seq_number == data_packet.seq_number:
                         kills_sent += 1
                         if kills_sent > 3:  # if retransmitted 3 times already, kill cxn with client
-                            self.logger.debug('Unable to end connection; killing now.')
+                            self.logger.debug(
+                                'Kill packet failed to be acknowledged; unable to end connection, closing now.')
                             return
 
-                    data_packet.frequency += 1
-                    data_packet.update_checksum()
-                    self.io.send_queue.put((data_packet, self.destination))
+                    if not window.acknowledged_packets.get(data_packet.seq_number):
+                        data_packet.frequency += 1
+                        data_packet.update_checksum()
+                        self.io.send_queue.put((data_packet, self.destination))
                 continue
 
             # if still getting SYN/ACK, retransmit ACK
@@ -257,7 +259,8 @@ class RxPSocket:
             # if a packet in window is acknowledged, slide the window past said received packet
             elif self.__verify_is_ack(ack_packet, address) and window.index_of_packet(ack_packet) >= 0:
                 self.retransmit_timer.update(ack_packet.frequency, time.time() - time_sent)
-                self.logger.debug('Updated retransmit timer; timeout is now ' + str(self.retransmit_timer.timeout))
+                self.logger.debug(
+                    'ACK received. Updated retransmit timer; timeout is now ' + str(self.retransmit_timer.timeout))
                 window.acknowledge_packet(ack_packet)
 
                 if self.__verify_ack(ack_packet, address, window.window[0].seq_number):
