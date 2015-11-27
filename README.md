@@ -1,7 +1,7 @@
 # reliable-transfer-suite
 Team Members:
 
-	Hunter Brennick (@gatech.edu)
+	Hunter Brennick (hbrennik3@gatech.edu)
 	Sherman Mathews (smathews6@gatech.edu)
 	
 Class: 		
@@ -29,17 +29,13 @@ Files:
 
 Instructions:
 
-	Note: This code was tested using Python 3.4, so please use that to run files.
-
-	To run the client program:
-		python fxa_client.py X A P
-		where:
-			X is the port that the FxA-client's UDP socket shoudl bind to
-				(it should be the server's port number minus 1)
-			A is the IP address of Net Emu
-			P is the UDP port number of NetEmu
-		upon program start, user will be prompted for desired window size
-
+	Note: This code was tested using Python 2.7 on Linux and Mac.
+	
+	Steps:
+		1. Run NetEmu.py
+		2. Run the server application
+		3. Run the client application
+	
 	To run the server program:
 		python fxa_server.py X A P
 		where:
@@ -48,6 +44,20 @@ Instructions:
 			A is the IP address of Net Emu
 			P is the UDP port number of NetEmu
 		upon program start, user will be prompted for desired window size
+	
+	To run the client program:
+		python fxa_client.py X A P
+		where:
+			X is the port that the FxA-client's UDP socket should bind to
+				(it should be the server's port number minus 1)
+			A is the IP address of Net Emu
+			P is the UDP port number of NetEmu
+		upon program start, user will be prompted for desired window size
 
-Updated Protocol and API description: TODO
-Bugs and Limitations: TODO
+Updated Protocol and API description: 
+	
+	TODO
+	
+Bugs and Limitations: 
+
+	TODO
