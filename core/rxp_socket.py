@@ -378,6 +378,7 @@ class RxPSocket:
                 else:
                     self.logger.debug(
                         'Timed out waiting for FIN/ACK during close. Already attempted to close 3 times, closing now without acknowledgement.')
+                    self.cxn_status = RxPConnectionStatus.NONE
                     break
 
             # if FIN received after FIN sent, verify with ACK and close
@@ -395,6 +396,7 @@ class RxPSocket:
                 self.io.send_queue.put((ack_packet, self.destination))
                 self.seq_number += 1
                 time.sleep(5)
+                self.cxn_status = RxPConnectionStatus.NONE
 
                 # received ACK for FIN sent, so FIN packet sent corrupted, resend fin packet
             if self.__verify_ack(fin_response_packet, address, fin_packet.seq_number):
