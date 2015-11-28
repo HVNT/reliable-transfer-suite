@@ -61,4 +61,5 @@ As for our API, we found we had a lot of redundancy between the client and serve
 For handling multiplexing in our application we decided to implement an asynchronous IO loop. Each socket starts a thread upon calling accept or connect (server and client respectively). These threads manage send and receive queues which are constantly polling for incoming data.
 	
 ##Bugs and Limitations:
-Unflushed packets from receive queue occasionally cause commands to fail after a disconnect.
+Unflushed packets from receive queue occasionally cause commands to fail after a disconnect.  
+FxAServer does not timeout FxAClient.
