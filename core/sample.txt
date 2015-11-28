@@ -1,0 +1,360 @@
+FXA_CLIENT OUTPUT:
+Enter a window size W: 10
+Enable debugger? (1 or 0) 1
+DEBUG:rxp_socket:Sending SYN to initiate handshake.
+DEBUG:rxp_socket:Received SYN/ACK during handshake; sending ACK to finish handshake.
+Enter a command (get F, post F, disconnect): get test.txt
+DEBUG:rxp_socket:Placing packets in window to be sent now...
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 5.91477874518
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 5.27321768479
+Sending request to get the file: test.txt
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Kill packet detected.
+Received file contents.
+Saved file as: test__copy.txt
+Enter a command (get F, post F, disconnect): post test.txt
+DEBUG:rxp_socket:Placing packets in window to be sent now...
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 4.83755670906
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 4.23891118134
+Sending file send request: test.txt
+DEBUG:rxp_socket:Placing packets in window to be sent now...
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 3.67728778131
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 3.24062119164
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.91007495263
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.65871049272
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.46908955734
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.3257042017
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.21708163439
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.13458428004
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.07166038062
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.02344228231
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.76028651335
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.55440035942
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.39925709487
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.28221142353
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.19367453964
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.12654164554
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.07543890301
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.03641055221
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.00645737128
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.983321522096
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.894387849374
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.824346274992
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.771117517382
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.730519102558
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.699358026234
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.675873244754
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.658155083759
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.64476340511
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.63461244247
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.626894710715
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.586038857155
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.551758410052
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.52262700468
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.50062018146
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.484053529236
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.471568995706
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.462143300178
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.45501265637
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.449606975549
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.445496062504
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.432501036263
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.418095265827
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.407239492981
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.399047996571
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.392855528293
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.388163433031
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.384604282884
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.377876770923
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.372589046903
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.368389404553
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.357004755341
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.347549061329
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.340051803908
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.334330957711
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.329958299088
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.326595422068
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.323972864311
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.321908343189
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.320273502524
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.318965802378
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.317904316964
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.306408907587
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.296481723789
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.288370039233
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.28226506979
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.277665432505
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.274194944447
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.271572168631
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.269583917326
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.268068431211
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.266910800462
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.260600409939
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.254109414386
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.247565263185
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.241758732237
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.235901580338
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.230676969671
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.225339242966
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.220009082918
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.215281746041
+Enter a command (get F, post F, disconnect):
+
+FXA_SERVER OUTPUT:
+Enter a window size W: 10
+Enable debugger? (1 or 0) 1
+Use 'ctrl + c' to terminate.
+DEBUG:rxp_socket:Received SYN during handshake; sending SYN/ACK to progress handshake.
+DEBUG:rxp_socket:Received ACK during handshake; client socket accepted
+Client session initialized; accepting client requests.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Kill packet detected.
+connection status is:  idle
+Streaming contents of file requested.
+DEBUG:rxp_socket:Placing packets in window to be sent now...
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 5.05886140176
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 4.34884984721
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 3.81218658209
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 3.40814266698
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 3.1036248122
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.87386218268
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.70017992925
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.56847489038
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.46839204863
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.39185425031
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 2.05460882027
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.79234448252
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.59533821434
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.4472916064
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.33597146574
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.25217395706
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.18902673916
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.14138037152
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.10536011739
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 1.07806128362
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.974870117926
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.889867822338
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.822386558406
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.771459487571
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.732934262814
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.703727889423
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.681512097377
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.664548103467
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.651498190921
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.641407643836
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.633491135334
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.616582903337
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.583989460961
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.557434156623
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.537333811339
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.522049794102
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.510404618602
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.501482159325
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.494599348795
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.489353578845
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.485197150884
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.482001440772
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.456980840018
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.436972304467
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.421850491195
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.410466443838
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.401879477375
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.395390043951
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.390482715008
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.386762839778
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.383929849158
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.381761608271
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.36535514605
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.35214101495
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.342145207088
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.33461847454
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.328945270529
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.32466308514
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.321422601814
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.318961599372
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.317088047587
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.315653739991
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.304073136305
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.294783013385
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.287794162122
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.282531528361
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.278563176775
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.275564559414
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.273295314815
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.271572439518
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.270257790207
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.267078391498
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.261145073159
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.254921124309
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.249285888258
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.243462995291
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.238172276756
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.232709815924
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.227192021892
+DEBUG:rxp_socket:ACK received. Updated retransmit timer; timeout is now 0.222266122384
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Kill packet detected.
+connection status is:  idle
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Sending ACK during data transfer.
+DEBUG:rxp_socket:Kill packet detected.
+Saved file as: test__copy(1).txt
